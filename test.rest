@@ -1,0 +1,185 @@
+@baseUrl=http://10.123.224.114:8000/api/v1
+@token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIwMWExM2M2YS0wYTRhLTcxYjAtOWM4My05OGI2MmM0OGRkYWYiLCJqdGkiOiJkYWFlMjA1NjBmM2UwNzBiZGI0YTg4NmIxY2NiODc1N2I3NzlkNDBmYmI0ZDZhODcyM2E1MzExY2Y1ZDIyZDUyNDA3NDhmOTQ5OThhYTMzOCIsImlhdCI6MTc5MjExNzc2Ny42MDQzNDIsIm5iZiI6MTc5MjExNzc2Ny42MDQzNDYsImV4cCI6MTc5MjEyMTM2Ny40NzYwMzYsInN1YiI6IjAxYTEzYzc5LThlODAtNzExMS04NjUyLThjZTI2NWJlZjRlMCIsInNjb3BlcyI6W119.AihFY8xIPGDkpOif3WVNf9BkY3z7iyw643VhPcJzrRpN1AFLGVsOpx6Pw-OuLO4SseMWEm8bpi9wWrlCj91Au5KtW9bnb3LudG97I_hiUuf0lOUiWDTxmrzTmemWEJUATsh0C9HzT5Sxw1ewxmePxsqAyvXhrU96z-xV9vzGYKBHsPoIdTofYBb5OsDOPp-Su1mGsMhWdslcEVopfBxZx0jSPyrWBLV332IGIZzrPyALrw-xjkspGFFEfkO90y0TcElLGNEaXRu7v_L6LpllbK8zoPdAGVsmuC9TjAJKfi42JZ9rjkvGvWGAMPC2-U00hh4xnmA9baKbYBoHFh9MlyVAeuBHfXRioPhUQu9y3fHHq00oA0sknjuqldlULa9f_B_08URXgZArmMqGiU0_6_Wy9mqX1idQXHVfWFwkW5NfWdLgzQvIu9vQaShDgTbcRUsKho8vwFzgdFpe6I6E8PWNWVnAlrVRPNktx9Urp0jL7bbW7Dni60KCyKxAowYOD53SuHymILLJV53kh05fGyzgQraTxMpvC_B19HAvDfVcZjczxI9yKTaH3rpf5gBmo8BQOj6lWlLGoRL5UJ1Yfvn7UHqHOo71j3lIW3u4GkUIOA_A8UzsAKLtSfDEU66wLTRHcPPNQ4frd7vplF0vwuKEDOX0tWj0ct8WWOK3pBs
+
+POST {{baseUrl}}/auth/register
+Accept: application/json
+Content-Type: application/json
+
+{
+    "email": "favour@golden.com",
+    "password": "1234567890Pp@",
+    "first_name": "Favour",
+    "last_name": "Golden",
+    "phone": "090344030851"
+}
+
+### Login
+POST {{baseUrl}}/auth/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "identifier": "favour@golden.com",
+    "password": "1234567890Pp@"
+}
+
+### Refresh
+POST {{baseUrl}}/auth/refresh
+Accept: application/json
+Content-Type: application/json
+
+### Fetch Profile
+GET  {{baseUrl}}/auth/me
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+### Logout
+delete {{baseUrl}}/auth/logout
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+### Create Store
+POST {{baseUrl}}/stores
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+    "name": "Tele Ltd",
+    "lga_id": "01a13c68-8847-7362-935a-91c18443e978",
+    "address": "Oweeroo",
+    "zip_code": "1234567"
+}
+
+### Create Role
+POST {{baseUrl}}/roles
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+    "name": "Cash Manager",
+    "permission_ids": ["01a13c4d-dfd0-73b3-940c-b7a453146c6f", "01a13c4d-dfde-73f3-b246-4b242bf13125"]
+}
+
+### Get Roles
+GET {{baseUrl}}/roles
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+### Get Staff
+GET {{baseUrl}}/staff
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+### Create Staff
+POST {{baseUrl}}/staff
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+    "email": "staff@worker.com",
+    "first_name": "Staff",
+    "last_name": "Worker",
+    "phone": "090344300851"
+}
+
+### Create Product
+POST {{baseUrl}}/products
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+    "sku": "23jjjo",
+    "name": "Staff",
+    "opening_quantity": "20",
+    "selling_price": "500",
+    "cost_price": "100",
+    "low_stock_threshold": 10
+}
+
+### Get Products
+GET {{baseUrl}}/products?stock=out_of_stock
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+### Get Products by Id
+GET {{baseUrl}}/products/01a13c7d-557e-70a7-8af9-a9a20ce8263b
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+### Get State
+GET {{baseUrl}}/states
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+
+### Get Sales
+Get {{baseUrl}}/sales
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+
+### Checkout Product
+POST {{baseUrl}}/sales
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+    "amount_paid": 1000,
+    "payment_method": "cash",
+    "due_date": "2026-12-12",
+    "customer_name": "Golde",
+    "customer_phone": "090344030851",
+    "customer_email": "favour@golden.com",
+    "customer_address": "favour@golden.com",
+    "customer_lga_id": "01a13c68-8847-7362-935a-91c18443e978",
+    "items": [
+        {
+            "product_id": "01a13c7d-557e-70a7-8af9-a9a20ce8263b",
+            "quantity": 5
+        }
+    ]
+}
+
+### Update Sale
+PATCH {{baseUrl}}/sales/01a13c95-1d58-7211-980b-17536a62bd43
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+    # "payment_type": "credit",
+    # "payment_method": "cash",
+    # "due_date": "2026-12-12",
+    # "customer_name": "Golden",
+    # "customer_phone": "090344030851",
+    # "customer_email": "favour@golden.com",
+    # "customer_address": "favour@golden.com",
+    # "customer_lga_id": "01a13c68-8847-7362-935a-91c18443e978",
+    # "amount_paid": 10
+
+    "items": [
+        {
+            "product_id": "01a14030-58c9-73da-b51b-b08b17ca11c9",
+            "quantity": 3
+        }
+    ]
+}
+
+### Dashboard
+GET  {{baseUrl}}/dashboard/summary?from=2026-10-14&to=2026-10-16
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}

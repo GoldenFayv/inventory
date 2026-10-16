@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Actions\CreateUser;
+use App\DataTransferObjects\NewUserContext;
+use App\Events\NewUserEvent;
+use App\Http\Resources\UserResource;
+use App\Http\Resources\UserStoreResource;
+use App\Models\UserStore;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Str;
+
+class StaffController extends Controller
+{
+    public function index(Request $request): AnonymousResourceCollection
+    {
+        $user = $request->user();
+
+        $staff = UserStore::with(['last_login', 'user'])->whereNotNull("user_id")->where("store_id", $user->active_store_id)->paginate($request->input("per_page", 10));
+
+        return UserStoreResource::collection($staff);
+    }
+
+    public function store(Request $request, CreateUser $createUser): UserResource
+    {
+        $data = $request->all();
+
+        $data['password'] = Str::password(10);
+        $data['password'] = 'Pa$$w0rd!';
+
+        $user = $createUser->handle($data);
+
+        NewUserEvent::dispatch($user, new NewUserContext($request->user()->active_store_id));
+
+        return new UserResource($user);
+    }
+}
