@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #176b43;
+  --color-primary-hover: #125535;
+  --color-primary-light: #e4f4ea;
+
+  --color-background: #f7f9f7;
+  --color-surface: #ffffff;
+  --color-border: #dce4dd;
+
+  --color-text: #202923;
+  --color-text-muted: #647067;
+
+  --color-success: #18794e;
+  --color-warning: #946200;
+  --color-danger: #b42318;
+
+  --radius-card: 12px;
+  --radius-input: 8px;
+}
