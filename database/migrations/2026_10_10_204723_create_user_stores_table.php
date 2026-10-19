@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignUuid('store_id')->constrained('stores')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->boolean("is_active")->default(true);
             $table->timestamps();
 
             $table->unique(["user_id", "store_id"]);

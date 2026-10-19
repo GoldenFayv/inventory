@@ -57,7 +57,7 @@ Route::prefix('v1')->group(function () {
 
             Route::get('permissions', PermissionController::class);
 
-            Route::prefix('products')/*->middleware([FeatureEnum::INVENTORY->middleware()])*/->group(function () {
+            Route::prefix('products')->middleware([FeatureEnum::INVENTORY->middleware()])->group(function () {
                 Route::get('', [ProductController::class, 'index'])->middleware(PermissionEnum::PRODUCTS_VIEW->middleware());
                 Route::get('{productId}', [ProductController::class, 'show'])->middleware(PermissionEnum::PRODUCTS_VIEW->middleware());
                 Route::post('', [ProductController::class, 'store'])->middleware(PermissionEnum::PRODUCTS_CREATE->middleware());

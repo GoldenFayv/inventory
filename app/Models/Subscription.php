@@ -30,10 +30,11 @@ class Subscription extends MyBaseModel
     protected $casts = [
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
-        'cancelled_at' => 'dateTime',
+        'cancelled_at' => 'datetime',
         'status' => SubscriptionStatus::class,
         'billing_interval' => BillingInterval::class
     ];
+    
     public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);

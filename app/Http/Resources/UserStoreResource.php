@@ -18,7 +18,8 @@ class UserStoreResource extends JsonResource
             "id" => $this->id,
             "user" => $this->whenLoaded("user", fn(): UserResource => new UserResource($this->user)),
             "store" => $this->whenLoaded("store", fn(): StoreResource => new StoreResource($this->store)),
-            "last_login" => $this->whenLoaded("last_login", fn(): LoginHistoryResource => new LoginHistoryResource($this->last_login))
+            "last_login" => $this->whenLoaded("last_login", fn(): LoginHistoryResource => new LoginHistoryResource($this->last_login)),
+            "subscription" => $this->whenLoaded("subscription", fn() => new SubscriptionResource($this->subscription))
         ];
     }
 }
