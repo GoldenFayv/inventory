@@ -14,13 +14,9 @@ class DashboardService
     {
         $store = $user->active_store;
 
-        [$start, $end] = $this->resolvePeriod($filters);
-
-
         $sales = Invoice::query()
             ->where('store_id', $store->id)
-            ->where('created_at', '>=', $start)
-            ->where('created_at', '<', $end)
+            ->forPeriod($filters)
             ->sum('total_amount');
 
         $moneyReceived = Payment::query()
@@ -29,8 +25,7 @@ class DashboardService
                 fn($query) =>
                 $query->where('store_id', $store->id)
             )
-            ->where('payments.created_at', '>=', $start)
-            ->where('payments.created_at', '<', $end)
+            ->forPeriod($filters)
             ->sum('payments.amount');
 
         $outstandingCredit = Invoice::query()
@@ -75,27 +70,5 @@ class DashboardService
             'low_stock_count' => $lowStockCount,
             'out_of_stock_count' => $outOfStockCount,
         ];
-    }
-
-    private function resolvePeriod(array $filters): array
-    {
-        if (!empty($filters['date'])) {
-            $start = Carbon::createFromFormat('Y-m-d', $filters['date'])->startOfDay();
-
-            return [$start, $start->copy()->endOfDay()];
-        }
-
-        if (!empty($filters['from']) && !empty($filters['to'])) {
-            $start = Carbon::createFromFormat('Y-m-d', $filters['from'])->startOfDay();
-
-            $end = Carbon::createFromFormat('Y-m-d', $filters['to'])->endOfDay();
-
-            return [$start, $end];
-        }
-
-        // Default to today.
-        $start = today();
-
-        return [$start, $start->copy()->endOfDay()];
     }
 }

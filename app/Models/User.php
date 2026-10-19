@@ -7,6 +7,9 @@ namespace App\Models;
 
 use App\Traits\BelongsToLga;
 use App\Traits\HasLoginHistory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasName;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -18,9 +21,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 
-#[Fillable(['first_name', 'last_name', 'email', 'phone', 'phone_verified_at', 'password', 'active_store_id'])]
+#[Fillable(['first_name', 'last_name', 'email', 'phone', 'phone_verified_at', 'password', 'active_store_id', 'is_super_user'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser, HasName
 {
     use HasFactory, Notifiable, HasUuids, HasLoginHistory, HasApiTokens, BelongsToLga;
 
@@ -34,7 +37,18 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_super_user' => 'boolean'
         ];
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return (bool) $this->is_super_user;
+    }
+
+    public function getFilamentName(): string
+    {
+        return $this->last_name;
     }
 
     public function user_stores(): HasMany

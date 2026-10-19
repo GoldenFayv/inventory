@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enum\PermissionEnum;
 use App\Models\Permission;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\PermissionRegistrar;
@@ -12,9 +13,7 @@ class PermissionSeeder extends Seeder
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        $permissions = config("permission-data");
-
-        foreach ($permissions as $permission) {
+        foreach (PermissionEnum::definitions() as $permission) {
             Permission::updateOrCreate(
                 [
                     'name' => $permission['name'],

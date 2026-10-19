@@ -19,7 +19,7 @@ class ProductController extends Controller
     {
         $user = $request->user();
 
-        $products = Product::stockStatus($request->input("stock"))->with('media')->search($request->input("search"))->where('store_id', $user->active_store_id)->paginate(($request->input("per_page", 10)));
+        $products = Product::stockStatus($request->input("stock"))->with('media')->search($request->input("search"))->where('store_id', $user->active_store_id)->latest()->paginate(($request->input("per_page", 10)));
 
         return ProductResource::collection($products);
     }

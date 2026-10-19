@@ -2,6 +2,7 @@
 
 namespace App\Models\Concerns;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -112,5 +113,54 @@ trait Filterable
         return is_string($value)
             ? array_filter(explode(',', $value), fn($v) => $v !== '')
             : Arr::wrap($value);
+    }
+
+public function scopeFilterPeriod(Builder $query, array $filters): Builder
+{
+    $from = $filters['from'] ?? null;
+    $to = $filters['to'] ?? null;
+
+    // If both keys are missing, skip filtering completely
+    if (empty($from) && empty($to)) {
+        return $query;
+    }
+
+    // If only one key is present, mirror it to represent a single specific date
+    $start = Carbon::parse($from ?? $to)->startOfDay();
+    $end = Carbon::parse($to ?? $from)->endOfDay();
+
+    return $query->whereBetween('created_at', [$start, $end]);
+}
+
+
+    public function scopePaymentStatus(
+        Builder $query,
+        string $status
+    ): Builder {
+        return match ($status) {
+            'paid' => $query->whereColumn(
+                'total_amount_paid',
+                '>=',
+                'total_amount'
+            ),
+
+            'partial' => $query
+                ->where('total_amount_paid', '>', 0)
+                ->whereColumn(
+                    'total_amount_paid',
+                    '<',
+                    'total_amount'
+                ),
+
+            'unpaid' => $query
+                ->where('total_amount_paid', '<=', 0)
+                ->whereColumn(
+                    'total_amount',
+                    '>',
+                    'total_amount_paid'
+                ),
+
+            default => $query,
+        };
     }
 }

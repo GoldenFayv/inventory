@@ -33,7 +33,7 @@ final readonly class RecordSalePayload
             customer_lga_id: $data['customer_lga_id'] ?? null,
             payment_method: $data['payment_method'] ?? null,
             due_date: $data['due_date'] ?? null,
-            amount: $data['amount'] ?? 0,
+            amount: $data['amount_paid'] ?? 0,
         );
     }
 

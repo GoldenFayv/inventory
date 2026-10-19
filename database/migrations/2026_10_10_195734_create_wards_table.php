@@ -22,8 +22,9 @@ return new class extends Migration
 
             $table->unique(['lga_id', 'name']);
         });
-
-        app(StateNLgaSeeder::class)->run();
+        if (!app()->environment('testing')) {
+            app(StateNLgaSeeder::class)->run();
+        }
     }
 
     /**

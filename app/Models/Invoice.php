@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\Filterable;
+use App\Models\Concerns\ForPeriods;
 use App\Models\Concerns\Searchable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,9 +17,9 @@ use Illuminate\Support\Facades\DB;
 #[Fillable('store_id', 'generated_by', 'customer_name', 'customer_phone', 'customer_email', 'customer_address', 'customer_lga_id', 'total_amount', 'total_amount_paid', 'reference')]
 class Invoice extends Model
 {
-    use HasUuids, Searchable, Filterable;
+    use HasUuids, Searchable, Filterable, ForPeriods;
 
-    protected array $searchable = ['reference', 'sku', 'customer_email', 'customer_name', 'customer_phone'];
+    protected array $searchable = ['reference', 'customer_email', 'customer_name', 'customer_phone'];
     protected array $filterable = [
         'generated_by'      => 'in',
         'customer_lga_id'   => 'in',

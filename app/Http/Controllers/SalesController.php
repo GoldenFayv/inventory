@@ -26,7 +26,7 @@ class SalesController extends Controller
     {
         $user = $request->user();
 
-        $invoices = Invoice::credits($request->boolean('credit'))->filter($request->query())->search($request->query('search'))->with(["items", "generatedBy", "payments"])->where('store_id', $user->active_store_id)->latest()->paginate($request->input("per_page", 10));
+        $invoices = Invoice::filterPeriod($request->all())->credits($request->boolean('credit'))->filter($request->query())->search($request->query('search'))->with(["items", "generatedBy", "payments"])->where('store_id', $user->active_store_id)->latest()->paginate($request->input("per_page", 10));
 
         return InvoiceResource::collection($invoices);
     }

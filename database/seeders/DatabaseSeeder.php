@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -17,8 +16,11 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
+        // if (!app()->environment('testing')) {
         $this->call([
             PermissionSeeder::class,
+            SubscriptionPlanSeeder::class,
         ]);
+        // }
     }
 }

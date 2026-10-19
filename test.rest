@@ -1,5 +1,6 @@
-@baseUrl=http://10.123.224.114:8000/api/v1
-@token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIwMWExM2M2YS0wYTRhLTcxYjAtOWM4My05OGI2MmM0OGRkYWYiLCJqdGkiOiJkYWFlMjA1NjBmM2UwNzBiZGI0YTg4NmIxY2NiODc1N2I3NzlkNDBmYmI0ZDZhODcyM2E1MzExY2Y1ZDIyZDUyNDA3NDhmOTQ5OThhYTMzOCIsImlhdCI6MTc5MjExNzc2Ny42MDQzNDIsIm5iZiI6MTc5MjExNzc2Ny42MDQzNDYsImV4cCI6MTc5MjEyMTM2Ny40NzYwMzYsInN1YiI6IjAxYTEzYzc5LThlODAtNzExMS04NjUyLThjZTI2NWJlZjRlMCIsInNjb3BlcyI6W119.AihFY8xIPGDkpOif3WVNf9BkY3z7iyw643VhPcJzrRpN1AFLGVsOpx6Pw-OuLO4SseMWEm8bpi9wWrlCj91Au5KtW9bnb3LudG97I_hiUuf0lOUiWDTxmrzTmemWEJUATsh0C9HzT5Sxw1ewxmePxsqAyvXhrU96z-xV9vzGYKBHsPoIdTofYBb5OsDOPp-Su1mGsMhWdslcEVopfBxZx0jSPyrWBLV332IGIZzrPyALrw-xjkspGFFEfkO90y0TcElLGNEaXRu7v_L6LpllbK8zoPdAGVsmuC9TjAJKfi42JZ9rjkvGvWGAMPC2-U00hh4xnmA9baKbYBoHFh9MlyVAeuBHfXRioPhUQu9y3fHHq00oA0sknjuqldlULa9f_B_08URXgZArmMqGiU0_6_Wy9mqX1idQXHVfWFwkW5NfWdLgzQvIu9vQaShDgTbcRUsKho8vwFzgdFpe6I6E8PWNWVnAlrVRPNktx9Urp0jL7bbW7Dni60KCyKxAowYOD53SuHymILLJV53kh05fGyzgQraTxMpvC_B19HAvDfVcZjczxI9yKTaH3rpf5gBmo8BQOj6lWlLGoRL5UJ1Yfvn7UHqHOo71j3lIW3u4GkUIOA_A8UzsAKLtSfDEU66wLTRHcPPNQ4frd7vplF0vwuKEDOX0tWj0ct8WWOK3pBs
+@baseUrl=http://localhost:8000/api/v1
+# @baseUrl=http://10.123.224.114:8000/api/v1
+@token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIwMWExNTFmOS1iZjY4LTcyNTQtYTdkMS05OWJmNTg3ZTk2ZDkiLCJqdGkiOiJlNzdjNzY2MDgwNjlhMmY1NTI4NWJiZDJhNjI5NjgwZWNmZDM2N2MzNTYzMGE5OTljZDA5OTEyZDVlM2YxNDk5ZDdiNjcxMTRlOTQyOTI3MiIsImlhdCI6MTc5MjM3NzAwOS4yMzY3MTYsIm5iZiI6MTc5MjM3NzAwOS4yMzY3MjEsImV4cCI6MTc5MjM4MDYwOS4wNjA0NDEsInN1YiI6IjAxYTE1MWZlLWIwNDctNzBlMy05M2UzLWZiNjI1OWI5OGM2ZiIsInNjb3BlcyI6W119.fn-Y_9MXZMAKJ78_bucmrR7lDe4hFhMDZ6NVHYwT7RPRnfHjWwWcL4UdNiVVQCMZhIXz8WZ82G2pkjwq-SEBN5CLqxtk6ZgyWsd5bGQ0S4CfrLwquVAFcDA3Zx4zmtUh9_YrOrhRQn2LHbR5v2REqleHNFNk22UpCbDhZvpaEqeGeJzv1IlWnmQE6mY7yvI0QsQPbex0n3RaWKzhUCRSmVKoR8QhKupSDqqJBA3TzPdb7W-35d2pa1nD2sEdAbt_PI5bB1kmBF8LO5J-iJ1MmgSczvYUKF48WTR-sXrp1NXFbrtDTsY0UpOFCIpH4LgsJ1CujaQqRAiBr6znfdQ3MIonvcrMboyEYrnGFa32Bzlpgz6hiAC1LbqNsfW8TVk9Thjz7URcey_RZLoaNRkJFzNevfnr4fYQNkKqPciAsrcGkiErEFlATKT105GLVPOsGlWY-Dpm3P3oMfS9maPHBlQNT8njKE7X6Xga7gt6rOq1tQa_JAZiq41vUH4mH83W6IfxWiYOs8Zut792bcSycVdfAGrRNNXQNu5YZ8IObI0mjltQ1W3Z2fg7FEysIgOV0yUbjEMnlznPkmjGrqSp6KSv_eSCmx6FasPMoonj1TV2k-4yXJRcoPKZ2MkTIrHK9pJMYrjTuV5NKy1NI_QkXcUtwQ1DEBl7URQ5xNe6ZfE
 
 POST {{baseUrl}}/auth/register
 Accept: application/json
@@ -19,8 +20,8 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "identifier": "favour@golden.com",
-    "password": "1234567890Pp@"
+    "identifier": "favour.e2002@gmail.com",
+    "password": "Pa$$w0rd!"
 }
 
 ### Refresh
@@ -40,6 +41,12 @@ Accept: application/json
 Content-Type: application/json
 Authorization: {{token}}
 
+### Get State
+GET {{baseUrl}}/states
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
 ### Create Store
 POST {{baseUrl}}/stores
 Accept: application/json
@@ -48,10 +55,22 @@ Authorization: {{token}}
 
 {
     "name": "Tele Ltd",
-    "lga_id": "01a13c68-8847-7362-935a-91c18443e978",
+    "lga_id": "01a151f8-f5bb-73c3-a379-3497b0bbb2ca",
     "address": "Oweeroo",
     "zip_code": "1234567"
 }
+
+### Get Plans
+GET  {{baseUrl}}/plans
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+### Subscribe
+POST {{baseUrl}}/plans/01a151fb-a7e4-7270-ad67-c0bc55e1005e/subscribe
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
 
 ### Create Role
 POST {{baseUrl}}/roles
