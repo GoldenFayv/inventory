@@ -3,10 +3,10 @@ import {
   LayoutDashboard,
   Package,
   ShoppingCart,
-  Users,
   Menu,
   LogOut,
   X,
+  Settings,
 } from "lucide-react";
 import { useAuth } from "../../app/AuthProvider";
 import { useState } from "react";
@@ -15,7 +15,8 @@ const navigation = [
   { label: "Home", to: "/", icon: LayoutDashboard },
   { label: "Products", to: "/products", icon: Package },
   { label: "Sales", to: "/sales", icon: ShoppingCart },
-  { label: "Debts", to: "/debts", icon: Users },
+  // { label: "Debts", to: "/debts", icon: Users },
+  { label: "Settings", to: "/settings", icon: Settings },
 ];
 
 export default function AppLayout() {
@@ -143,7 +144,7 @@ export default function AppLayout() {
         {/* Mobile bottom navigation */}
         <nav
           aria-label="Main navigation"
-          className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] md:hidden"
+          className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] md:hidden"
         >
           {navigation.map(({ label, to, icon: Icon }) => (
             <NavLink

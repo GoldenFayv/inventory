@@ -42,10 +42,10 @@ function formatDate(value: string) {
 }
 
 export default function DashboardPage() {
-  const [dateMode, setDateMode] = useState<DateMode>("today");
+  const [dateMode, ] = useState<DateMode>("range");
   const [selectedDate, setSelectedDate] = useState(getLocalDate);
   const [from, setFrom] = useState(getLocalDate);
-  const [to, setTo] = useState(getLocalDate);
+  const [to, setTo] = useState("");
 
   const filters =
     dateMode === "single"
@@ -211,7 +211,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <button
+          {/* <button
             type="button"
             onClick={() => setDateMode("today")}
             aria-pressed={dateMode === "today"}
@@ -222,9 +222,9 @@ export default function DashboardPage() {
             }`}
           >
             Today
-          </button>
+          </button> */}
 
-          <button
+          {/* <button
             type="button"
             onClick={() => setDateMode("single")}
             aria-pressed={dateMode === "single"}
@@ -235,9 +235,9 @@ export default function DashboardPage() {
             }`}
           >
             Single date
-          </button>
+          </button> */}
 
-          <button
+          {/* <button
             type="button"
             onClick={() => setDateMode("range")}
             aria-pressed={dateMode === "range"}
@@ -248,7 +248,7 @@ export default function DashboardPage() {
             }`}
           >
             Date range
-          </button>
+          </button> */}
         </div>
 
         {dateMode === "single" && (

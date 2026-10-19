@@ -123,7 +123,7 @@ export default function OutstandingCreditList({
       )}
 
       <Link
-        to="/sales"
+        to="/sales?credit=true"
         className="mt-3 flex min-h-11 items-center justify-center gap-2 rounded-input border border-border px-4 py-3 font-medium text-primary hover:bg-primary-light"
       >
         View all sales

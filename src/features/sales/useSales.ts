@@ -8,15 +8,36 @@ export interface ISalesFilters {
   paymentStatus: "all" | "paid" | "partial" | "unpaid";
 }
 
+
+export interface ISalesFilters {
+  search: string;
+  paymentStatus: "all" | "paid" | "partial" | "unpaid";
+  credit?: boolean;
+  date?: string;
+  from?: string;
+  to?: string;
+}
+
 export function useSales(page: number, filters: ISalesFilters) {
   return useQuery({
-    queryKey: ["sales", page, filters],
-    queryFn: () => saleService.getAll(page, filters.search),
+    queryKey: ["sales", "history", page, filters],
+    queryFn: () =>
+      saleService.getAll(page, filters.search, 10, {
+        status:
+          filters.paymentStatus === "all"
+            ? undefined
+            : filters.paymentStatus,
+        credit: filters.credit,
+        date: filters.date,
+        from: filters.from,
+        to: filters.to,
+      }),
     placeholderData: keepPreviousData,
     staleTime: 30_000,
     refetchOnWindowFocus: true,
   });
 }
+
 
 export function useSale(id: string) {
   return useQuery<IInvoice, Error>({
@@ -54,15 +75,8 @@ export function useRecentSales() {
   return useQuery({
     queryKey: ["sales", "recent"],
     queryFn: async () => {
-      const response = await saleService.getAll(1);
-
-      return [...response.data]
-        .sort(
-          (a, b) =>
-            new Date(b.generated_at).getTime() -
-            new Date(a.generated_at).getTime(),
-        )
-        .slice(0, 5);
+      const response = await saleService.getAll(1, "", 5);
+      return response.data;
     },
     staleTime: 30_000,
   });

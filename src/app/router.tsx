@@ -15,6 +15,8 @@ import EditProductPage from "../features/products/EditProductPage";
 import CheckoutPage from "../features/sales/CheckoutPage";
 import SalesHistoryPage from "../features/sales/SalesHistoryPage";
 import SaleDetailsPage from "../features/sales/SaleDetailsPage";
+import SettingsPage from "../features/settings/SettingsPage";
+import RolesPage from "../features/settings/RolePage";
 
 export const router = createBrowserRouter([
   {
@@ -54,6 +56,14 @@ export const router = createBrowserRouter([
               {
                 path: "/sales/new",
                 element: <CheckoutPage />,
+              },
+              {
+                path: "/settings",
+                element: <SettingsPage />,
+              },
+              {
+                path: "/settings/roles",
+                element: <RolesPage />,
               },
             ],
           },

@@ -90,6 +90,10 @@ export default function CheckoutPage() {
       return;
     }
 
+    if (details.due_date && Number(details.amount_paid) >= totalAmount) {
+      delete details.due_date;
+    }
+
     const payload: CreateSalePayload = {
       items: items.map(({ product, quantity }) => ({
         product_id: product.id,

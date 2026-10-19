@@ -8,7 +8,7 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import { useSales } from "./useSales";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 const currency = (amount: number) => `₦${amount.toLocaleString("en-NG")}`;
 
@@ -25,29 +25,74 @@ const statusStyles = {
 };
 
 export default function SalesHistoryPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [page, setPage] = useState(1);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(searchParams.get("search") ?? "");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [paymentStatus, setPaymentStatus] = useState<
-    "all" | "paid" | "partial" | "unpaid"
-  >("all");
+  // const [paymentStatus, setPaymentStatus] = useState<
+  //   "all" | "paid" | "partial" | "unpaid"
+  // >("all");
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedSearch(search.trim());
+      const value = search.trim();
+
+      setDebouncedSearch(value);
+
+      const next = new URLSearchParams(searchParams);
+
+      if (value) {
+        next.set("search", value);
+      } else {
+        next.delete("search");
+      }
+
+      next.delete("page");
+      setSearchParams(next, { replace: true });
       setPage(1);
     }, 350);
 
     return () => clearTimeout(timer);
-  }, [search]);
+  }, [search, searchParams, setSearchParams]);
+
+  const paymentStatus = (searchParams.get("status") ?? "all") as
+    | "all"
+    | "paid"
+    | "partial"
+    | "unpaid";
+
+  const creditOnly = searchParams.get("credit") === "true";
+  const date = searchParams.get("date") ?? "";
+  const from = searchParams.get("from") ?? "";
+  const to = searchParams.get("to") ?? "";
 
   const { data, isPending, isError, isFetching, refetch } = useSales(page, {
     search: debouncedSearch,
     paymentStatus,
+    credit: creditOnly,
+    date,
+    from,
+    to,
   });
 
   const sales = data?.data ?? [];
   const meta = data?.meta;
+
+  function updateFilters(updates: Record<string, string>) {
+    const next = new URLSearchParams(searchParams);
+
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value) {
+        next.set(key, value);
+      } else {
+        next.delete(key);
+      }
+    });
+
+    next.delete("page");
+    setSearchParams(next);
+    setPage(1);
+  }
 
   return (
     <main className="space-y-6 pb-8">
@@ -62,7 +107,7 @@ export default function SalesHistoryPage() {
           className="inline-flex items-center gap-2 rounded-input bg-primary px-4 py-3 text-sm font-medium text-white transition hover:opacity-90"
         >
           <Plus size={18} aria-hidden="true" />
-          Checkout
+          Create Sale
         </Link>
       </header>
 
@@ -93,10 +138,11 @@ export default function SalesHistoryPage() {
           <select
             id="payment-status"
             value={paymentStatus}
-            onChange={(event) => {
-              setPaymentStatus(event.target.value as typeof paymentStatus);
-              setPage(1);
-            }}
+            onChange={(event) =>
+              updateFilters({
+                status: event.target.value === "all" ? "" : event.target.value,
+              })
+            }
             className="w-full rounded-input border border-border bg-background px-3 py-2.5 text-sm text-text sm:w-auto"
             disabled
           >
@@ -109,6 +155,75 @@ export default function SalesHistoryPage() {
           <span className="text-xs text-text-muted">
             Status filtering will be enabled when the API supports it.
           </span>
+        </div>
+
+        <label className="flex items-center gap-2 text-sm text-text">
+          <input
+            type="checkbox"
+            checked={creditOnly}
+            onChange={(event) =>
+              updateFilters({
+                credit: event.target.checked ? "true" : "",
+              })
+            }
+            className="h-4 w-4 rounded border-border accent-primary"
+          />
+          Outstanding credit only
+        </label>
+
+        <div className="flex flex-wrap items-end gap-3">
+          <div className="space-y-1">
+            <label
+              htmlFor="sale-from"
+              className="text-sm font-medium text-text"
+            >
+              From
+            </label>
+            <input
+              id="sale-from"
+              type="date"
+              value={from}
+              max={to || undefined}
+              onChange={(event) =>
+                updateFilters({
+                  from: event.target.value,
+                  to:
+                    event.target.value && to && event.target.value > to
+                      ? ""
+                      : to,
+                  date: "",
+                })
+              }
+              className="rounded-input border border-border bg-background px-3 py-2 text-sm text-text"
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label htmlFor="sale-to" className="text-sm font-medium text-text">
+              To
+            </label>
+            <input
+              id="sale-to"
+              type="date"
+              value={to}
+              min={from || undefined}
+              onChange={(event) =>
+                updateFilters({
+                  to: event.target.value,
+                  date: "",
+                })
+              }
+              className="rounded-input border border-border bg-background px-3 py-2 text-sm text-text"
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={() => updateFilters({ date: "", from: "", to: "" })}
+            className="rounded-input border border-border px-3 py-2 text-sm text-text-muted hover:bg-background"
+          >
+            Clear dates
+          </button>
         </div>
       </section>
 

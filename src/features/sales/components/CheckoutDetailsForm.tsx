@@ -12,7 +12,7 @@ export interface ICheckoutDetails {
   customer_lga_id: string;
   amount_paid: string;
   payment_method: PaymentMethod;
-  due_date: string;
+  due_date?: string;
 }
 
 interface CheckoutDetailsFormProps {
