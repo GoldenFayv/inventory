@@ -2,24 +2,27 @@
 
 namespace App\Services;
 
+use App\Actions\Subscriptions\ActivateSubscription;
 use App\Actions\Subscriptions\CreateSubscription;
 use App\Actions\Subscriptions\CreateSubscriptionPayment;
 use App\Enum\BillingInterval;
-use App\Enum\SubscriptionPaymentEnum;
+use App\Enum\SubscriptionPaymentStatus;
 use App\Enum\SubscriptionStatus;
 use App\Models\Store;
 use App\Models\Subscription;
 use App\Models\SubscriptionPayment;
 use App\Models\SubscriptionPlan;
 use App\Models\SubscriptionPlanPrice;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class SubscriptionService
 {
-    public function __construct(public CreateSubscription $createSubscription, public CreateSubscriptionPayment $createPayment) {}
+    private const int PAYMENT_REUSE_MINUTES = 20;
+    public function __construct(public CreateSubscription $createSubscription, public CreateSubscriptionPayment $createPayment, public ActivateSubscription $activateSubscriptionAction) {}
 
-    public function startTrialPlan(Store $store): Subscription
+    public function activateTrialPlan(Store $store): SubscriptionPayment
     {
         return DB::transaction(function () use ($store) {
             $existingSubscription = Subscription::query()->where('store_id', $store->getKey())->exists();
@@ -46,26 +49,63 @@ class SubscriptionService
                 ]);
             }
 
-            $startsAt = now();
+            $subscription = $this->createSubscription->handle($store, $planPrice);
 
-            $subscription = $this->createSubscription->handle($store, $planPrice, $startsAt,  $startsAt->copy()->addDays(14), SubscriptionStatus::TRIALING);
+            $this->activateSubscription($payment = $this->createPayment->handle($subscription));
 
-            return $this->createPayment->handle($subscription);
+            return $payment;
         });
     }
 
     public function requestNonTrialPlan(Store $store, SubscriptionPlanPrice $subscriptionPlanPrice): SubscriptionPayment
     {
-        $hasPendingSubscription = Subscription::query()
+        Store::whereKey($store->getKey())->lockForUpdate()->firstOrFail();
+
+        $subscription = Subscription::query()
             ->where('store_id', $store->getKey())
-            ->where('status', SubscriptionPaymentEnum::PENDING)
-            ->whereNull('ends_at')
             ->where('subscription_plan_price_id', $subscriptionPlanPrice->getKey())
-            ->latest()->first();
+            ->where('status', SubscriptionStatus::PENDING)
+            ->latest()
+            ->first()
+            ?? $this->createSubscription->handle($store, $subscriptionPlanPrice);
 
-        $subscription = ($hasPendingSubscription) ? $hasPendingSubscription : $this->createSubscription->handle($store, $subscriptionPlanPrice);
+        return $subscription->payments()
+            ->where('status', SubscriptionPaymentStatus::PENDING)
+            ->where('created_at', '>', now()->subMinutes(self::PAYMENT_REUSE_MINUTES))
+            ->latest()
+            ->first()
+            ?? $this->createPayment->handle($subscription);
+    }
 
+    public function activateSubscription(SubscriptionPayment $payment): Subscription
+    {
+        $subscription = Subscription::whereKey($payment->subscription_id)->lockForUpdate()->firstOrFail();
 
-        return $this->createPayment->handle($subscription, "paystack");
+        if ($subscription->status !== SubscriptionStatus::PENDING) {
+            throw ValidationException::withMessages([
+                'payment' => 'This subscription is not awaiting payment.',
+            ]);
+        }
+
+        $matches = $subscription->ends_at == null && $subscription->status === SubscriptionStatus::PENDING;
+
+        if (!$matches) {
+            throw ValidationException::withMessages([
+                'payment' => 'The verified transaction does not match the pending subscription payment.',
+            ]);
+        }
+
+        $startsAt = CarbonImmutable::now();
+        $status = $payment->amount > 0 ? SubscriptionStatus::ACTIVE : SubscriptionStatus::TRIALING;
+        $existingActiveSubscription = Subscription::where('store_id', $subscription->store_id)->whereIn('status', [SubscriptionStatus::ACTIVE, SubscriptionStatus::TRIALING, SubscriptionStatus::QUEUED])->whereDate("ends_at", ">", $startsAt)->orderByDesc('ends_at')->first();
+
+        if ($existingActiveSubscription) {
+            $startsAt = CarbonImmutable::instance($existingActiveSubscription->ends_at);
+            $status = SubscriptionStatus::QUEUED;
+        }
+
+        $endsAt = $subscription->billing_interval->addTo($startsAt);
+
+        return $this->activateSubscriptionAction->handle($subscription->fresh(), $startsAt, $endsAt, $status);
     }
 }

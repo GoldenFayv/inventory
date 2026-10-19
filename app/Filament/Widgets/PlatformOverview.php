@@ -2,7 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Enum\SubscriptionPaymentEnum;
+use App\Enum\SubscriptionPaymentStatus;
 use App\Enum\SubscriptionStatus;
 use App\Models\Store;
 use App\Models\Subscription;
@@ -17,16 +17,17 @@ class PlatformOverview extends BaseWidget
     {
         $totalStores = Store::query()->count();
 
-        $totalUsers = User::query()->count();
+        $totalUsers = User::query()->whereIsSuperUser(false)->count();
 
         $activeSubscriptions = Subscription::query()
             ->whereIn('status', [
                 SubscriptionStatus::ACTIVE->value,
                 SubscriptionStatus::TRIALING->value,
             ])
+            ->whereDate('ends_at', '>=', now())
             ->count();
 
-        $successfulPayments = SubscriptionPayment::query()->where('status', SubscriptionPaymentEnum::SUCCESSFUL->value);
+        $successfulPayments = SubscriptionPayment::query()->where('status', SubscriptionPaymentStatus::SUCCESSFUL->value);
 
         $totalRevenue = $successfulPayments->sum('amount');
 

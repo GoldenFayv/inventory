@@ -9,4 +9,5 @@ enum SubscriptionStatus: string
     case TRIALING = "trialing";
     case CANCELLED = "cancelled";
     case expired = "expired";
+    case QUEUED = "queued";
 }

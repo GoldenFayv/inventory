@@ -3,20 +3,21 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 use RuntimeException;
 
 class PaystackService
 {
-    public function initializeTransaction(string $email, int $amount, string $currency, string $reference, array $metadata = []): array
+    public function __construct(private ?string $secretKey = null, private ?string $baseUrl = null)
     {
-        $secretKey = config('services.paystack.secret_key');
-        $baseUrl = rtrim(config('services.paystack.base_url'), '/');
+        $this->secretKey = config('services.paystack.secret_key');
+        $this->baseUrl = rtrim(config('services.paystack.base_url'), '/');
 
-        if (! $secretKey) {
+        if (! $this->secretKey) {
             throw new RuntimeException('Paystack secret key is not configured.');
         }
-
+    }
+    public function initializeTransaction(string $email, int $amount, string $currency, string $reference, array $metadata = []): array
+    {
         if ($amount <= 0) {
             throw new RuntimeException('Payment amount must be greater than zero.');
         }
@@ -25,12 +26,12 @@ class PaystackService
             throw new RuntimeException('Invalid Paystack transaction reference.');
         }
 
-        $response = Http::withToken($secretKey)
+        $response = Http::withToken($this->secretKey)
             ->acceptJson()
             ->asJson()
             ->connectTimeout(5)
             ->timeout(20)
-            ->post("{$baseUrl}/transaction/initialize", [
+            ->post("{$this->baseUrl}/transaction/initialize", [
                 'email' => $email,
                 'amount' => (string) $amount,
                 'currency' => strtoupper($currency),
@@ -54,8 +55,33 @@ class PaystackService
         ];
     }
 
-    public function generateReference(): string
+    public function verifyTransaction(string $reference): array
     {
-        return 'SUB-' . Str::upper((string) Str::uuid());
+        $response = Http::withToken($this->secretKey)
+            ->acceptJson()
+            ->connectTimeout(5)
+            ->timeout(20)
+            ->get("{$this->baseUrl}/transaction/verify/" . rawurlencode($reference));
+
+        $response->throw();
+
+        $payload = $response->json();
+
+        if (! ($payload['status'] ?? false) || ! isset($payload['data'])) {
+            throw new RuntimeException('Paystack transaction verification failed.');
+        }
+
+        return $payload['data'];
+    }
+
+    public function isValidWebhookSignature(string $payload, ?string $signature): bool
+    {
+        if (! $this->secretKey || ! $signature) {
+            return false;
+        }
+
+        $expected = hash_hmac('sha512', $payload, $this->secretKey);
+
+        return hash_equals($expected, $signature);
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Enum\FeatureEnum;
 use App\Enum\PermissionEnum;
+use App\Http\Controllers\ActivateFreeTrialController;
 use App\Http\Controllers\AssignRoleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\SetProductStatusController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\VerifyTrxController;
 use App\Http\Resources\StateResource;
 use App\Models\State;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -44,11 +46,11 @@ Route::prefix('v1')->group(function () {
             Route::get("", PlanController::class);
         });
 
-        Route::middleware([FeatureEnum::INVENTORY->middleware()])->group(function () {
-            Route::prefix("transactions")->group(function () {
-                Route::post("{transactionId}/verify", [SubscriptionController::class, "store"]);
-            });
+        Route::post("subscriptions/trial", ActivateFreeTrialController::class);
 
+        Route::get("transactions/{reference}/verify", VerifyTrxController::class);
+
+        Route::middleware([FeatureEnum::INVENTORY->middleware()])->group(function () {
             Route::middleware([FeatureEnum::STAFF_MANAGEMENT->middleware()])->group(function () {
                 Route::get("dashboard/summary", DashboardController::class)->middleware([PermissionEnum::DASHBOARD_VIEW->middleware()]);
             });

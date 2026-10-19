@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\SubscriptionPayments\Tables;
 
-use App\Enum\SubscriptionPaymentEnum;
+use App\Enum\SubscriptionPaymentStatus;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -33,12 +33,12 @@ class SubscriptionPaymentsTable
 
                 TextColumn::make('status')
                     ->badge()
-                    ->color(fn(SubscriptionPaymentEnum|string $state): string => match ($state instanceof SubscriptionPaymentEnum
+                    ->color(fn(SubscriptionPaymentStatus|string $state): string => match ($state instanceof SubscriptionPaymentStatus
                         ? $state
-                        : SubscriptionPaymentEnum::tryFrom($state)) {
-                        SubscriptionPaymentEnum::SUCCESSFUL => 'success',
-                        SubscriptionPaymentEnum::PENDING => 'warning',
-                        SubscriptionPaymentEnum::FAILED => 'danger',
+                        : SubscriptionPaymentStatus::tryFrom($state)) {
+                        SubscriptionPaymentStatus::SUCCESSFUL => 'success',
+                        SubscriptionPaymentStatus::PENDING => 'warning',
+                        SubscriptionPaymentStatus::FAILED => 'danger',
                         default => 'gray',
                     }),
 

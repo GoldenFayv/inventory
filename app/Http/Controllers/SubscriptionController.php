@@ -20,21 +20,22 @@ class SubscriptionController extends Controller
 
         $price = SubscriptionPlanPrice::query()
             ->with('plan')
-            ->whereHas('plan', function (Builder $builder) {
-                $builder->where('is_active', true)->where('price', '>', 0)->whereNull('store_id');
-            })
+            ->where('price', '>', 0)
+            ->whereHas('plan', fn(Builder $builder) => $builder->where('is_active', true)->whereForFreeTrial(false)->whereNull('store_id'))
             ->where('is_active', true)
             ->findOrFail($plan_price_id);
 
-        return DB::transaction(function () use ($user, $price): SubscriptionPaymentResource {
+        $payment = DB::transaction(fn() => $this->subscriptionService->requestNonTrialPlan($user->active_store, $price));
 
-            $payment = $this->subscriptionService->requestNonTrialPlan($user->active_store, $price)->fresh();
+        $email = $user->active_store->email ?? $user->email;
 
-            $email = $user->active_store->email ?? $user->email;
-
+        if (!$payment->provider_payload) {
             $checkOut = $this->paystackService->initializeTransaction($email, $payment->amount, $payment->currency, $payment->reference);
 
-            return new SubscriptionPaymentResource($payment)->additional(["checkout" => $checkOut]);
-        });
+            $payment->update(["provider_payload" => $checkOut]);
+
+            $payment->refresh();
+        }
+        return new SubscriptionPaymentResource($payment);
     }
 }

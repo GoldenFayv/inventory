@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\SubscriptionPayments\Schemas;
 
-use App\Enum\SubscriptionPaymentEnum;
+use App\Enum\SubscriptionPaymentStatus;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -26,7 +26,7 @@ class SubscriptionPaymentForm
                     ->required()
                     ->default('NGN'),
                 Select::make('status')
-                    ->options(SubscriptionPaymentEnum::class)
+                    ->options(SubscriptionPaymentStatus::class)
                     ->default('pending')
                     ->required(),
                 DateTimePicker::make('paid_at'),

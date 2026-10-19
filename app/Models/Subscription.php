@@ -2,9 +2,13 @@
 
 namespace App\Models;
 
+use App\Enum\BillingInterval;
+use App\Enum\SubscriptionPaymentStatus;
+use App\Enum\SubscriptionStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[Fillable(
     [
@@ -27,6 +31,8 @@ class Subscription extends MyBaseModel
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
         'cancelled_at' => 'dateTime',
+        'status' => SubscriptionStatus::class,
+        'billing_interval' => BillingInterval::class
     ];
     public function store(): BelongsTo
     {
@@ -46,5 +52,10 @@ class Subscription extends MyBaseModel
     public function payments(): HasMany
     {
         return $this->hasMany(SubscriptionPayment::class);
+    }
+
+    public function payment(): HasOne
+    {
+        return $this->hasOne(SubscriptionPayment::class)->where("status", SubscriptionPaymentStatus::SUCCESSFUL);
     }
 }

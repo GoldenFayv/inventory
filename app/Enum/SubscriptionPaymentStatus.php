@@ -2,7 +2,7 @@
 
 namespace App\Enum;
 
-enum SubscriptionPaymentEnum: string
+enum SubscriptionPaymentStatus: string
 {
     case PENDING = "pending";
     case FAILED = "failed";

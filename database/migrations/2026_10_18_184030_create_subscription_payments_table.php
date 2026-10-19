@@ -1,6 +1,6 @@
 <?php
 
-use App\Enum\SubscriptionPaymentEnum;
+use App\Enum\SubscriptionPaymentStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->unsignedBigInteger('amount');
             $table->string('currency', 3)->default('NGN');
 
-            $table->string('status')->default(SubscriptionPaymentEnum::PENDING); // pending, successful, failed
+            $table->string('status')->default(SubscriptionPaymentStatus::PENDING); // pending, successful, failed
 
             $table->timestamp('paid_at')->nullable();
             $table->json('provider_payload')->nullable();
