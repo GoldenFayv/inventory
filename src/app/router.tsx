@@ -17,6 +17,9 @@ import SalesHistoryPage from "../features/sales/SalesHistoryPage";
 import SaleDetailsPage from "../features/sales/SaleDetailsPage";
 import SettingsPage from "../features/settings/SettingsPage";
 import RolesPage from "../features/settings/RolePage";
+import SubscriptionPlansPage from "../features/subscriptions/pages/SubscriptionPlansPage";
+import SubscriptionRequiredRoute from "../components/auth/SubscriptionRequiredRoute";
+import StaffPage from "../features/settings/StaffPage";
 
 export const router = createBrowserRouter([
   {
@@ -39,31 +42,44 @@ export const router = createBrowserRouter([
         element: <StoreRequiredRoute />,
         children: [
           {
-            element: <AppLayout />,
+            path: "/subscription",
+            element: <SubscriptionPlansPage />,
+          },
+          {
+            element: <SubscriptionRequiredRoute />,
             children: [
               {
-                path: "/",
-                element: <DashboardPage />,
-              },
-              { path: "/products", element: <ProductsPage /> },
-              { path: "/products/new", element: <CreateProductPage /> },
-              {
-                path: "/products/:productId/edit",
-                element: <EditProductPage />,
-              },
-              { path: "/sales", element: <SalesHistoryPage /> },
-              { path: "/sales/:id", element: <SaleDetailsPage /> },
-              {
-                path: "/sales/new",
-                element: <CheckoutPage />,
-              },
-              {
-                path: "/settings",
-                element: <SettingsPage />,
-              },
-              {
-                path: "/settings/roles",
-                element: <RolesPage />,
+                element: <AppLayout />,
+                children: [
+                  {
+                    path: "/",
+                    element: <DashboardPage />,
+                  },
+                  { path: "/products", element: <ProductsPage /> },
+                  { path: "/products/new", element: <CreateProductPage /> },
+                  {
+                    path: "/products/:productId/edit",
+                    element: <EditProductPage />,
+                  },
+                  { path: "/sales", element: <SalesHistoryPage /> },
+                  { path: "/sales/:id", element: <SaleDetailsPage /> },
+                  {
+                    path: "/sales/new",
+                    element: <CheckoutPage />,
+                  },
+                  {
+                    path: "/settings",
+                    element: <SettingsPage />,
+                  },
+                  {
+                    path: "/settings/roles",
+                    element: <RolesPage />,
+                  },
+                  {
+                    path: "/settings/staff",
+                    element: <StaffPage />,
+                  },
+                ],
               },
             ],
           },

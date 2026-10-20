@@ -1,3 +1,5 @@
+import type { ISubscription } from "../features/subscriptions/types/subscription.types";
+
 export default interface IUser {
     id: Id;
     first_name: string;
@@ -13,5 +15,6 @@ export default interface IUser {
 export interface IUserStore {
     id: Id;
     store_id: Id;
+    subscription?: ISubscription | null;
     [key: string]: unknown;
 }

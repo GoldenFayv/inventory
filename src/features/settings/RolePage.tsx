@@ -11,22 +11,11 @@ export default function RolesPage() {
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
   const [showForm, setShowForm] = useState(false);
 
-  const permissions = useMemo(
+  const permissionCategories = useMemo(
     () => permissionsQuery.data ?? [],
     [permissionsQuery],
   );
   const roles = rolesQuery.data ?? [];
-
-  const groupedPermissions = useMemo(() => {
-    return permissions.reduce<Record<string, typeof permissions>>(
-      (groups, permission) => {
-        const category = permission.category || "Other";
-        (groups[category] ??= []).push(permission);
-        return groups;
-      },
-      {},
-    );
-  }, [permissions]);
 
   function togglePermission(id: string) {
     setSelectedPermissions((current) =>
@@ -122,54 +111,51 @@ export default function RolesPage() {
               <p className="text-sm text-danger">
                 Could not load permissions. Please try again.
               </p>
-            ) : permissions.length === 0 ? (
+            ) : permissionCategories.length === 0 ? (
               <p className="text-sm text-text-muted">
                 No permissions are available.
               </p>
             ) : (
               <div className="space-y-4">
-                {Object.entries(groupedPermissions).map(
-                  ([category, categoryPermissions]) => (
-                    <section
-                      key={category}
-                      className="rounded-input border border-border p-3"
-                    >
-                      <h4 className="mb-3 text-sm font-semibold text-text">
-                        {category}
-                      </h4>
+                {permissionCategories.map((group) => (
+                  <section
+                    key={group.category}
+                    className="rounded-input border border-border p-3"
+                  >
+                    <h4 className="mb-3 text-sm font-semibold text-text">
+                      {group.category}
+                    </h4>
 
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        {categoryPermissions.map((permission) => (
-                          <label
-                            key={permission.id}
-                            className="flex cursor-pointer items-start gap-3"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={selectedPermissions.includes(
-                                permission.id,
-                              )}
-                              onChange={() => togglePermission(permission.id)}
-                              className="mt-1 h-4 w-4 accent-primary"
-                            />
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {group.permissions.map((permission) => (
+                        <label
+                          key={permission.id}
+                          className="flex cursor-pointer items-start gap-3"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedPermissions.includes(
+                              permission.id,
+                            )}
+                            onChange={() => togglePermission(permission.id)}
+                            className="mt-1 h-4 w-4 accent-primary"
+                          />
 
-                            <span className="min-w-0">
-                              <span className="block text-sm font-medium text-text">
-                                {permission.description || permission.name}
-                              </span>
-                              {permission.description &&
-                                permission.description !== permission.name && (
-                                  <span className="block wrap-break-word text-xs text-text-muted">
-                                    {permission.name}
-                                  </span>
-                                )}
+                          <span className="min-w-0">
+                            <span className="block text-sm font-medium text-text">
+                              {permission.name}
                             </span>
-                          </label>
-                        ))}
-                      </div>
-                    </section>
-                  ),
-                )}
+                            {permission.description && (
+                              <span className="block wrap-break-word text-xs text-text-muted">
+                                {permission.description}
+                              </span>
+                            )}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </section>
+                ))}
               </div>
             )}
           </div>
