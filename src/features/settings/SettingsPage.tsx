@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Store, Users, ShieldCheck, ChevronRight } from "lucide-react";
+import { Store, Users, ShieldCheck, ChevronRight, Lock } from "lucide-react";
 
 const settingsItems = [
   {
@@ -19,6 +19,12 @@ const settingsItems = [
     description: "Create roles and control what staff members can do.",
     icon: ShieldCheck,
     to: "/settings/roles",
+  },
+  {
+    title: "Profile & security",
+    description: "Update your details and change your password.",
+    icon: Lock,
+    to: "/settings/profile",
   },
 ];
 

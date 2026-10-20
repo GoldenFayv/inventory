@@ -20,6 +20,8 @@ import RolesPage from "../features/settings/RolePage";
 import SubscriptionPlansPage from "../features/subscriptions/pages/SubscriptionPlansPage";
 import SubscriptionRequiredRoute from "../components/auth/SubscriptionRequiredRoute";
 import StaffPage from "../features/settings/StaffPage";
+import StorePage from "../features/settings/StorePage";
+import ProfilePage from "../features/settings/ProfilePage";
 
 export const router = createBrowserRouter([
   {
@@ -78,6 +80,14 @@ export const router = createBrowserRouter([
                   {
                     path: "/settings/staff",
                     element: <StaffPage />,
+                  },
+                  {
+                    path: "/settings/store",
+                    element: <StorePage />,
+                  },
+                  {
+                    path: "/settings/profile",
+                    element: <ProfilePage />,
                   },
                 ],
               },

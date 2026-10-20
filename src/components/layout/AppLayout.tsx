@@ -21,6 +21,9 @@ const navigation = [
 
 export default function AppLayout() {
   const { user, logout } = useAuth();
+
+  const store = user?.store_user?.store;
+
   const navigate = useNavigate();
 
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -42,7 +45,7 @@ export default function AppLayout() {
     <div className="flex h-dvh overflow-hidden bg-background text-text">
       {/* Desktop sidebar */}
       <aside className="hidden h-dvh w-64 shrink-0 overflow-y-auto border-r border-border bg-surface md:flex md:flex-col">
-        <div className="border-b border-border p-6">
+        <div className="border-b border-border p-4">
           <h1 className="text-xl font-bold text-primary">Inventory</h1>
           <p className="mt-1 text-sm text-text-muted">Manage your shop</p>
         </div>
@@ -87,14 +90,16 @@ export default function AppLayout() {
         </div>
       </aside>
 
-      <div className="flex h-dvh min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+      <div className="flex h-dvh min-h-0 min-w-0 flex-1 flex-col overflow-hidden pt-5">
         {/* Header */}
         <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border bg-surface px-4 md:px-8">
           <div className="flex items-center gap-3">
             <span className="font-semibold md:hidden">Inventory</span>
-            <span className="hidden text-sm text-text-muted md:block">
-              Store workspace
-            </span>
+            <h2>
+              <span className="hidden text-lg font-bold text-text-muted md:block">
+                {store ? store.name : "Store workspace"}
+              </span>
+            </h2>
           </div>
 
           {/* Mobile account menu */}
@@ -116,7 +121,7 @@ export default function AppLayout() {
                     {user?.first_name} {user?.last_name}
                   </p>
                   <p className="truncate text-xs text-text-muted">
-                    {user?.email}
+                    {user?.email} | {user?.store_user?.role?.name}
                   </p>
                 </div>
 
