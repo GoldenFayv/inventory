@@ -16,10 +16,17 @@ class UserStoreResource extends JsonResource
     {
         return [
             "id" => $this->id,
+            "store_id" => $this->store_id,
+            "is_active" => $this->is_active,
             "user" => $this->whenLoaded("user", fn(): UserResource => new UserResource($this->user)),
             "store" => $this->whenLoaded("store", fn(): StoreResource => new StoreResource($this->store)),
             "last_login" => $this->whenLoaded("last_login", fn(): LoginHistoryResource => new LoginHistoryResource($this->last_login)),
-            "subscription" => $this->whenLoaded("subscription", fn() => new SubscriptionResource($this->subscription))
+            "subscription" => $this->whenLoaded("subscription", fn() => new SubscriptionResource($this->subscription)),
+            "role" => $this->whenLoaded('roles', function () {
+                $role = $this->roles->first();
+
+                return $role ? new RoleResource($role) : null;
+            }),
         ];
     }
 }

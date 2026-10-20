@@ -10,7 +10,6 @@ class PaystackService
     public function __construct(private ?string $secretKey = null, private ?string $baseUrl = null)
     {
         $this->secretKey = config('services.paystack.secret_key');
-        $this->baseUrl = rtrim(config('services.paystack.base_url'), '/');
 
         if (! $this->secretKey) {
             throw new RuntimeException('Paystack secret key is not configured.');
@@ -25,20 +24,14 @@ class PaystackService
         if (! preg_match('/^[a-zA-Z0-9\-=.]+$/', $reference)) {
             throw new RuntimeException('Invalid Paystack transaction reference.');
         }
-
-        $response = Http::withToken($this->secretKey)
-            ->acceptJson()
-            ->asJson()
-            ->connectTimeout(5)
-            ->timeout(20)
-            ->post("{$this->baseUrl}/transaction/initialize", [
-                'email' => $email,
-                'amount' => (string) $amount,
-                'currency' => strtoupper($currency),
-                'reference' => $reference,
-                'callback_url' => config('services.paystack.callback_url'),
-                'metadata' => $metadata,
-            ]);
+        $response = Http::paystack($this->secretKey)->post("/transaction/initialize", [
+            'email' => $email,
+            'amount' => (string) $amount,
+            'currency' => strtoupper($currency),
+            'reference' => $reference,
+            'callback_url' => config('services.paystack.callback_url'),
+            'metadata' => $metadata,
+        ]);
 
         $response->throw();
 
@@ -57,11 +50,9 @@ class PaystackService
 
     public function verifyTransaction(string $reference): array
     {
-        $response = Http::withToken($this->secretKey)
-            ->acceptJson()
-            ->connectTimeout(5)
-            ->timeout(20)
-            ->get("{$this->baseUrl}/transaction/verify/" . rawurlencode($reference));
+        $reference = rawurlencode($reference);
+
+        $response = Http::paystack($this->secretKey)->get("/transaction/verify/{$reference}");
 
         $response->throw();
 

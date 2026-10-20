@@ -3,6 +3,7 @@
 use App\Actions\ExceptionHandler;
 use App\Http\Middleware\CanAccess;
 use App\Http\Middleware\EnsureStoreHasFeature;
+use App\Http\Middleware\SetPermissionsTeam;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -19,6 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             "can.access" => CanAccess::class,
             'store.feature' => EnsureStoreHasFeature::class,
+        ])->api([
+            SetPermissionsTeam::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

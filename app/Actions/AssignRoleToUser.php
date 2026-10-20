@@ -7,6 +7,7 @@ use App\Models\UserStore;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Spatie\Permission\PermissionRegistrar;
 
 class AssignRoleToUser
 {
@@ -26,11 +27,20 @@ class AssignRoleToUser
             ]);
         }
 
-        dispatch(function () use ($staff, $validated) {
+        // dispatch(function () use ($staff, $validated, $store_id) {
+        $registrar = app(PermissionRegistrar::class);
+        $previousTeamId = $registrar->getPermissionsTeamId();
 
-            $role = Role::find($validated['role_id']);
+        try {
+            $registrar->setPermissionsTeamId($store_id);
 
-            $staff->assignRole($role);
-        });
+            $role = Role::findById($validated['role_id'], 'user');
+
+            $staff->unsetRelation('roles');
+            $staff->syncRoles([$role]); // replaces the old role instead of stacking a second one
+        } finally {
+            $registrar->setPermissionsTeamId($previousTeamId);
+        }
+        // });
     }
 }

@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
-#[Fillable('name', 'lga_id', 'address', 'zip_code', 'owner_id')]
+#[Fillable('name', 'lga_id', 'address', 'zip_code', 'owner_id', 'email', 'phone')]
 #[UseFactory(StoreFactory::class)]
 class Store extends MyBaseModel
 {

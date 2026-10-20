@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\UserStore;
 use Carbon\CarbonInterval;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
 
@@ -37,5 +38,15 @@ class AppServiceProvider extends ServiceProvider
         Passport::tokensExpireIn(CarbonInterval::minutes(app()->isProduction() ? 20 : 60));
         Passport::refreshTokensExpireIn(CarbonInterval::days(30));
         // Passport::personalAccessTokensExpireIn(CarbonInterval::months(6));
+
+        Http::macro(
+            'paystack',
+            fn(string $token) =>
+            Http::withToken($token)->acceptJson()
+                ->asJson()
+                ->connectTimeout(5)
+                ->timeout(20)
+                ->baseUrl(rtrim(config('services.paystack.base_url'), '/'))
+        );
     }
 }

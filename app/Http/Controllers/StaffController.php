@@ -11,6 +11,7 @@ use App\Models\UserStore;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Str;
+use Spatie\Permission\PermissionRegistrar;
 
 class StaffController extends Controller
 {
@@ -18,7 +19,14 @@ class StaffController extends Controller
     {
         $user = $request->user();
 
-        $staff = UserStore::with(['last_login', 'user'])->whereNotNull("user_id")->where("store_id", $user->active_store_id)->paginate($request->input("per_page", 10));
+        app(PermissionRegistrar::class)->setPermissionsTeamId($user->active_store_id);
+
+        $staff = UserStore::with(['last_login', 'user', 'roles'])
+        ->search($request->input("search"))
+            ->whereHas("user")
+            ->whereNotNull('user_id')
+            ->where('store_id', $user->active_store_id)
+            ->paginate($request->integer('per_page', 10));
 
         return UserStoreResource::collection($staff);
     }

@@ -1,6 +1,6 @@
 @baseUrl=http://localhost:8000/api/v1
 # @baseUrl=http://10.123.224.114:8000/api/v1
-@token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIwMWExNTFmOS1iZjY4LTcyNTQtYTdkMS05OWJmNTg3ZTk2ZDkiLCJqdGkiOiJmOWE4ZTE4NjY2YjExYWNiMjU2YTExOGY3NzQ0NmYzYTdlODliMWYyN2M2MWM5NmYyMTk5ZDU2ZTY5Zjk4OTNhOTBiMjY2OGY4M2Q1MTg2NCIsImlhdCI6MTc5MjQzNTcyMy40NTIwNTgsIm5iZiI6MTc5MjQzNTcyMy40NTIwNjgsImV4cCI6MTc5MjQzOTMyMy40NDUxMjksInN1YiI6IjAxYTE1MWZlLWIwNDctNzBlMy05M2UzLWZiNjI1OWI5OGM2ZiIsInNjb3BlcyI6W119.IbvyrH_nQeAQIZtJaLUWWUJCtoErp6hcZhEK8Xu79iznzDKKurBpJnQZ4Tl-a0Li-NOTC9HMrn0CV85H_2c63CSqG1_8R_5wv0M3hEEY1xatqnQv_-rdl5w5XCNk9_OHhINlxdmRDjXBItD_RvD9CFu5JBdd6wFaqIjYOcon8_40hjM_MzQaqQHmw2o6H1W3KsGDyTGAv4gz9MT6M1uyNkse2_uVwD7Y4zbvI8YMS2CLJFPpWqhPf_xc_DI1wMIVGD-x9qDIpLMnHweP_sNrOy-D_G7rhf1A9wLqS5WbRg2aASWKTwF7U6HnDVb3kT20Fyr7-sOzgVsHo4vUxaHKVyzg0mDAYYXnxAZQzos7U8Z0jhu7uGKKIh_0t58cwjMPmyj0Gw1rTa7XM6Kh1QCWb6GZT_ht4muDx1wdMNOaWKBHhcTh9guX9GGeoueIkduwoUZbW1v-3bSgDuKsiUCK2t1k1XR9PuODDzgZCesa7aBwJl-K2lHDRphzPpwYP8YTbYowkZO569ETKwq65ZtAEFVWh5Go55e3WcvqEND1D1fiCkIEW_XAS0XPB-Thh4RiQ72Go6L-skaOD6tTYZQSYP_s3HjzYnk__zrHug7JtN0zCAr4XMsHG60zcqFLiHpMRcDr_YwnmOXbEBNY2agWTvE8wX_zk0L3d3dajyWZkho
+@token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIwMWExNTFmOS1iZjY4LTcyNTQtYTdkMS05OWJmNTg3ZTk2ZDkiLCJqdGkiOiJlZWUxMTg3OTAyYzM2YzEzMjA5MTRhNmQwZjdjODI4ZjU4OGNkMDE3MmVjZjM3ZTUyMWQ0OTY5NTM4OGI2YzgyZmNmYTM3Mzc1NWJiYzU0ZCIsImlhdCI6MTc5MjQ0NDIzMi4wNzE1NywibmJmIjoxNzkyNDQ0MjMyLjA3MTU3NCwiZXhwIjoxNzkyNDQ3ODMyLjA2MzgzNSwic3ViIjoiMDFhMTUxZmUtYjA0Ny03MGUzLTkzZTMtZmI2MjU5Yjk4YzZmIiwic2NvcGVzIjpbXX0.YQH7EaEb5ah3GJueDhYkCLgcslizZWrqBuzwTbFLHepRHHHzDAb3GyJiBRK4_cHhrt2eL_Vi9K7i-Uc3d6zYrxiBhkBEqbJZnabL_BV1mmLu1GIIjtLpgLe2FShixo8uWsdZzjlgVkMiFAOl1LIlyLG52HMoz3xbjpLLMAR6D-FAdfWwSDThDeHHBwLDj1Jg1P190RH-dTDhdKgEO9Yt-rzSuRfJkmOLFjsdTnNA1iyq_9tbrrnYjEwlWFALw3tw1VTmCa3vLLFeGgV4mkzkLXQqSwaeGKSXiSO2audv-SpGOMpFqUY9axbxiwyIdugQ2zFTr6bcRbceGT3Tp5xnMoNFGVozYRlagJqG9KuaH0HEiBLFiuDrLbeI-QZezLTDGI13oVTO9ITpy70K7vr9SVkACEojHYQX7ep4oA7eBlb2noptKiI0zoTmiwdOGi3ilJh9GOGddXvJI0JrjmUyTaUj6_1axODT61eVU9-cQdi4BmI86o7thV5waVAhriwxNkmnNqe0Pk0xORBByS6wnNSFKEHKGKOUqaQrTVZFjqV0gdP8REqcwZUCJZrVcJcAeTNJ76CNViPCkiVRLD1EgBv_cwGkDV9HsuPJ4pTMFPwIkssexZxGmIcbkH8P7HmrsnyrphAosqpREHg-OCo_QIN36_J2iPCWsxswiurqGmQ
 
 POST {{baseUrl}}/auth/register
 Accept: application/json
@@ -79,7 +79,7 @@ Content-Type: application/json
 Authorization: {{token}}
 
 ### Verify Trx
-GET {{baseUrl}}/transactions/SUB-261019-IBMHDWLV/verify
+GET {{baseUrl}}/transactions/SUB-261019-8KOLIFVF/verify
 Accept: application/json
 Content-Type: application/json
 Authorization: {{token}}
@@ -92,7 +92,7 @@ Authorization: {{token}}
 
 {
     "name": "Cash Manager",
-    "permission_ids": ["01a13c4d-dfd0-73b3-940c-b7a453146c6f", "01a13c4d-dfde-73f3-b246-4b242bf13125"]
+    "permission_ids": ["01a151f9-5190-7016-af90-f45a29373600", "01a151f9-51be-7037-8263-64852a77fe40"]
 }
 
 ### Get Roles
@@ -124,6 +124,16 @@ Authorization: {{token}}
     "first_name": "Staff",
     "last_name": "Worker",
     "phone": "090344300851"
+}
+
+### Assign role to staff
+PUT {{baseUrl}}/staff/01a15602-385d-7260-9e50-b83d77999b54/role
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+    "role_id": "01a15601-d858-7138-827e-376cf27a0285"
 }
 
 ### Create Product

@@ -30,6 +30,7 @@ class SubscriptionController extends Controller
         $email = $user->active_store->email ?? $user->email;
 
         if (!$payment->provider_payload) {
+            $payment->refresh();
             $checkOut = $this->paystackService->initializeTransaction($email, $payment->amount, $payment->currency, $payment->reference);
 
             $payment->update(["provider_payload" => $checkOut]);

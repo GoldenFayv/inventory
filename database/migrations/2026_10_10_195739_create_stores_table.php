@@ -16,8 +16,10 @@ return new class extends Migration
             $table->string('name');
             $table->foreignUuid('owner_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignUuid('lga_id')->constrained('local_govt_areas')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string('address');
-            $table->string('zip_code');
+            $table->string('address')->nullable();
+            $table->string('zip_code')->nullable();
+            $table->string('email')->nullable()->unique();
+            $table->string('phone')->nullable()->unique();
             $table->uuid('parent_id')->nullable();
             $table->timestamps();
         });

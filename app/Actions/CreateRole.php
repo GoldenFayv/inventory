@@ -8,7 +8,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Spatie\Permission\PermissionRegistrar;
 
 class CreateRole
 {
@@ -18,12 +17,6 @@ class CreateRole
         $store = $user->active_store;
 
         $guardName = 'user';
-
-        // Set Spatie's team context to this store.
-        $registrar = app(PermissionRegistrar::class);
-        $previousTeamId = $registrar->getPermissionsTeamId();
-
-        $registrar->setPermissionsTeamId($store->id);
 
         try {
             $teamKey = config('permission.column_names.team_foreign_key', 'team_id');
@@ -48,7 +41,7 @@ class CreateRole
             });
         } finally {
             // Restore the previous team context.
-            $registrar->setPermissionsTeamId($previousTeamId);
+            // $registrar->setPermissionsTeamId($previousTeamId);
         }
     }
 }

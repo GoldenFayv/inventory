@@ -16,6 +16,7 @@ use App\Http\Controllers\SetProductStatusController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\ToggleUserStatusController;
 use App\Http\Controllers\VerifyTrxController;
 use App\Http\Resources\StateResource;
 use App\Models\State;
@@ -82,6 +83,7 @@ Route::prefix('v1')->group(function () {
                     Route::get("", [StaffController::class, "index"])->middleware(PermissionEnum::STAFF_VIEW->middleware());
                     Route::post("", [StaffController::class, "store"])->middleware(PermissionEnum::STAFF_CREATE->middleware());
                     Route::put("{staffId}/role", AssignRoleController::class)->middleware(PermissionEnum::STAFF_UPDATE->middleware());
+                    Route::patch("{user_store_id}/status", ToggleUserStatusController::class)->middleware(PermissionEnum::STAFF_UPDATE->middleware());
                 });
             });
         });

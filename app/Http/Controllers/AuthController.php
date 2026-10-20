@@ -33,7 +33,7 @@ class AuthController extends Controller
     public function show(Request $request): UserResource
     {
         $user = $request->user();
-        return new UserResource($user->load(['user_stores.subscription.plan.features', 'last_login']));
+        return new UserResource($user->load(['user_stores.subscription.plan.features', 'user_stores.store', 'last_login', 'user_stores.roles']));
     }
 
     public function destroy(Request $request)
