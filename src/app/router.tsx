@@ -22,6 +22,8 @@ import SubscriptionRequiredRoute from "../components/auth/SubscriptionRequiredRo
 import StaffPage from "../features/settings/StaffPage";
 import StorePage from "../features/settings/StorePage";
 import ProfilePage from "../features/settings/ProfilePage";
+import ResetPasswordPage from "../features/auth/ResetPasswordPage";
+import ForgotPasswordPage from "../features/auth/ForgotPasswordPage";
 
 export const router = createBrowserRouter([
   {
@@ -31,6 +33,14 @@ export const router = createBrowserRouter([
   {
     path: "/register",
     element: <RegisterPage />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPasswordPage />,
   },
 
   {

@@ -1,4 +1,4 @@
-import type { IRole } from "../features/settings/types/role.types";
+import type { IPermission, IRole } from "../features/settings/types/role.types";
 import type { ISubscription } from "../features/subscriptions/types/subscription.types";
 import type { IStore } from "./store.types";
 
@@ -20,5 +20,7 @@ export interface IUserStore {
     subscription?: ISubscription | null;
     store: IStore;
     role?: IRole;
+    permissions?: IPermission[];
+    new_subscriber: boolean;
     [key: string]: unknown;
 }

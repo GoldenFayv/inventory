@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Store, Users, ShieldCheck, ChevronRight, Lock } from "lucide-react";
+import { useAuth } from "../../app/AuthProvider";
 
 const settingsItems = [
   {
@@ -7,28 +8,41 @@ const settingsItems = [
     description: "Manage your store name, address, and business details.",
     icon: Store,
     to: "/settings/store",
+    permission: "store.update",
   },
   {
     title: "Staff management",
     description: "Add workers and manage who has access to your store.",
     icon: Users,
     to: "/settings/staff",
+    permission: "staff.view",
   },
   {
     title: "Roles & permissions",
     description: "Create roles and control what staff members can do.",
     icon: ShieldCheck,
     to: "/settings/roles",
+    permission: "role.view",
   },
   {
     title: "Profile & security",
     description: "Update your details and change your password.",
     icon: Lock,
     to: "/settings/profile",
+    permission: null,
   },
 ];
 
 export default function SettingsPage() {
+  const { user } = useAuth();
+  const permissions = user?.store_user?.permissions ?? [];
+
+  const can = (permission: string) =>
+    permissions.some((item) => item.name === permission);
+
+  const visibleSettings = settingsItems.filter(
+    (item) => item.permission === null || can(item.permission),
+  );
   return (
     <main className="space-y-6 pb-8">
       <header>
@@ -39,7 +53,7 @@ export default function SettingsPage() {
       </header>
 
       <section className="space-y-3">
-        {settingsItems.map((item) => {
+        {visibleSettings.map((item) => {
           const Icon = item.icon;
 
           return (

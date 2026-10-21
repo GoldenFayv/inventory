@@ -14,6 +14,10 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const resetSuccessful =
+    (location.state as { passwordReset?: boolean } | null)?.passwordReset ??
+    false;
+
   const state = location.state as LocationState | null;
   const destination = state?.from?.pathname ?? "/";
 
@@ -54,7 +58,15 @@ export default function LoginPage() {
           <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-primary text-xl font-bold text-white">
             I
           </div>
-
+          {resetSuccessful && (
+            <p
+              role="status"
+              className="mb-4 rounded-lg bg-primary-light p-3 text-sm text-text"
+            >
+              Password reset successfully. You can now sign in with your new
+              password.
+            </p>
+          )}
           <h1 className="text-2xl font-bold tracking-tight text-text">
             Welcome back
           </h1>
@@ -87,12 +99,21 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label
-              htmlFor="password"
-              className="mb-2 block text-sm font-medium text-text"
-            >
-              Password
-            </label>
+            <div className="mb-2 flex items-center justify-between">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-text"
+              >
+                Password
+              </label>
+
+              <Link
+                to="/forgot-password"
+                className="text-sm font-semibold text-primary hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
 
             <input
               id="password"

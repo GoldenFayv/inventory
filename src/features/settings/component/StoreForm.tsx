@@ -12,7 +12,7 @@ import { MapPin, Store } from "lucide-react";
 type StoreValues = {
   name: string;
   phone: string;
-  email: string;
+  email?: string;
   address: string;
   lga_id: Id;
   zip_code: string;
@@ -75,8 +75,8 @@ export default function StoreForm({
 
     updateStore.mutate({
       name: values.name.trim(),
-      phone: values.phone.trim(),
-      email: values.email.trim(),
+      phone: values.phone ? values.phone.trim() : undefined,
+      email: values.email ? values.email.trim() : undefined,
       address: values.address.trim(),
       lga_id: values.lga_id,
       zip_code: values.zip_code.trim(),
@@ -118,7 +118,7 @@ export default function StoreForm({
           <Field
             label="Phone"
             type="tel"
-            value={values.phone}
+            value={values.phone ?? ""}
             onChange={(v) => setField("phone", v)}
             errors={fields.phone}
             disabled={!canEdit}
@@ -128,7 +128,7 @@ export default function StoreForm({
           <Field
             label="Email"
             type="email"
-            value={values.email}
+            value={values.email ?? ""}
             onChange={(v) => setField("email", v)}
             errors={fields.email}
             disabled={!canEdit}
@@ -186,12 +186,12 @@ export default function StoreForm({
 
           <Field
             className="sm:col-span-2"
-            label="Street address"
+            label="Zip Code"
             value={values.zip_code}
-            onChange={(v) => setField("address", v)}
+            onChange={(v) => setField("zip_code", v)}
             errors={fields.zip_code}
             disabled={!canEdit}
-            placeholder="Street and area"
+            placeholder="Zip Code"
             autoComplete="street-address"
           />
         </div>

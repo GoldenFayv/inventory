@@ -15,7 +15,7 @@ import { useAuth } from "../../../app/AuthProvider";
 
 export default function SubscriptionPlansPage() {
   const navigate = useNavigate();
-  const { refreshUser } = useAuth();
+  const { refreshUser, user } = useAuth();
   const { data: plans, isLoading, isError, refetch } = useSubscriptionPlans();
 
   const [selectedIntervals, setSelectedIntervals] = useState<
@@ -85,7 +85,7 @@ export default function SubscriptionPlansPage() {
     );
   }
 
-  if (isError || !plans) {
+  if (isError || !plans || !user || !user?.store_user) {
     return (
       <div className="mx-auto max-w-xl p-6 text-center">
         <div className="rounded-2xl border border-border bg-surface p-8">
@@ -127,20 +127,22 @@ export default function SubscriptionPlansPage() {
             fits your business.
           </p>
 
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-text-muted">
-            <span className="flex items-center gap-2">
-              <Check size={16} className="text-success" />
-              14-day free trial
-            </span>
-            <span className="flex items-center gap-2">
-              <Check size={16} className="text-success" />
-              No payment for the trial
-            </span>
-            <span className="flex items-center gap-2">
-              <Check size={16} className="text-success" />
-              Plans for your business
-            </span>
-          </div>
+          {user.store_user.new_subscriber && (
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-text-muted">
+              <span className="flex items-center gap-2">
+                <Check size={16} className="text-success" />
+                14-day free trial
+              </span>
+              <span className="flex items-center gap-2">
+                <Check size={16} className="text-success" />
+                No payment for the trial
+              </span>
+              <span className="flex items-center gap-2">
+                <Check size={16} className="text-success" />
+                Plans for your business
+              </span>
+            </div>
+          )}
         </header>
 
         {/* Feedback */}
@@ -157,71 +159,75 @@ export default function SubscriptionPlansPage() {
         {/* Pricing cards */}
         <div className="grid grid-cols-1 items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {/* Free trial */}
-          <section className="relative flex flex-col overflow-hidden rounded-2xl border border-border bg-surface p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md sm:p-7">
-            <div className="absolute inset-x-0 top-0 h-1 bg-primary/60" />
+          {user.store_user.new_subscriber && (
+            <section className="relative flex flex-col overflow-hidden rounded-2xl border border-border bg-surface p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md sm:p-7">
+              <div className="absolute inset-x-0 top-0 h-1 bg-primary/60" />
 
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                <Gift size={23} />
-              </div>
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                  <Gift size={23} />
+                </div>
 
-              <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-                GET STARTED
-              </span>
-            </div>
-
-            <h2 className="mt-6 text-xl font-bold text-text">O Maka Free trial? Biaaa!!</h2>
-
-            <p className="mt-2 min-h-10 text-sm leading-6 text-text-muted">
-              Discover how much easier running your store can be.
-            </p>
-
-            <div className="mt-6 border-b border-border pb-6">
-              <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-bold tracking-tight text-text">
-                  ₦0
+                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                  GET STARTED
                 </span>
               </div>
-              <p className="mt-2 text-sm font-medium text-primary">
-                14 days to explore
-              </p>
-            </div>
 
-            <div className="flex-1 space-y-4 py-6">
-              <p className="text-sm font-semibold text-text">
-                Included in your trial
+              <h2 className="mt-6 text-xl font-bold text-text">
+                O Maka Free trial? Biaaa!!
+              </h2>
+
+              <p className="mt-2 min-h-10 text-sm leading-6 text-text-muted">
+                Discover how much easier running your store can be.
               </p>
 
-              {[
-                "Explore inventory management",
-                "Record sales and track debts",
-                "Monitor your stock levels",
-                "Experience the app before choosing a plan",
-              ].map((feature) => (
-                <div
-                  key={feature}
-                  className="flex items-start gap-3 text-sm leading-5 text-text-muted"
-                >
-                  <Check size={17} className="mt-0.5 shrink-0 text-success" />
-                  <span>{feature}</span>
+              <div className="mt-6 border-b border-border pb-6">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-bold tracking-tight text-text">
+                    ₦0
+                  </span>
                 </div>
-              ))}
-            </div>
+                <p className="mt-2 text-sm font-medium text-primary">
+                  14 days to explore
+                </p>
+              </div>
 
-            <button
-              onClick={() => void activateTrial()}
-              disabled={trialLoading}
-              className="mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {trialLoading ? (
-                <LoaderCircle size={18} className="animate-spin" />
-              ) : (
-                <Gift size={18} />
-              )}
-              {trialLoading ? "Activating..." : "Start free trial"}
-              {!trialLoading && <ArrowRight size={16} />}
-            </button>
-          </section>
+              <div className="flex-1 space-y-4 py-6">
+                <p className="text-sm font-semibold text-text">
+                  Included in your trial
+                </p>
+
+                {[
+                  "Explore inventory management",
+                  "Record sales and track debts",
+                  "Monitor your stock levels",
+                  "Experience the app before choosing a plan",
+                ].map((feature) => (
+                  <div
+                    key={feature}
+                    className="flex items-start gap-3 text-sm leading-5 text-text-muted"
+                  >
+                    <Check size={17} className="mt-0.5 shrink-0 text-success" />
+                    <span>{feature}</span>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={() => void activateTrial()}
+                disabled={trialLoading}
+                className="mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {trialLoading ? (
+                  <LoaderCircle size={18} className="animate-spin" />
+                ) : (
+                  <Gift size={18} />
+                )}
+                {trialLoading ? "Activating..." : "Start free trial"}
+                {!trialLoading && <ArrowRight size={16} />}
+              </button>
+            </section>
+          )}
 
           {/* Paid plans */}
           {plans.map((plan) => {

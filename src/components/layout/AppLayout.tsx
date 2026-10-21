@@ -1,26 +1,20 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import {
-  LayoutDashboard,
-  Package,
-  ShoppingCart,
-  Menu,
-  LogOut,
-  X,
-  Settings,
-} from "lucide-react";
+
+import { Menu, LogOut, X } from "lucide-react";
 import { useAuth } from "../../app/AuthProvider";
 import { useState } from "react";
-
-const navigation = [
-  { label: "Home", to: "/", icon: LayoutDashboard },
-  { label: "Products", to: "/products", icon: Package },
-  { label: "Sales", to: "/sales", icon: ShoppingCart },
-  // { label: "Debts", to: "/debts", icon: Users },
-  { label: "Settings", to: "/settings", icon: Settings },
-];
+import { navigation } from "./navigation";
 
 export default function AppLayout() {
   const { user, logout } = useAuth();
+  const permissions = user?.store_user?.permissions ?? [];
+
+  const can = (permission: string) =>
+    permissions.some((item) => item.name === permission);
+
+  const visibleNavigation = navigation.filter(
+    (item) => item.permission === null || can(item.permission),
+  );
 
   const store = user?.store_user?.store;
 
@@ -51,7 +45,7 @@ export default function AppLayout() {
         </div>
 
         <nav className="flex-1 space-y-2 p-4">
-          {navigation.map(({ label, to, icon: Icon }) => (
+          {visibleNavigation.map(({ label, to, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
@@ -151,7 +145,7 @@ export default function AppLayout() {
           aria-label="Main navigation"
           className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] md:hidden"
         >
-          {navigation.map(({ label, to, icon: Icon }) => (
+          {visibleNavigation.map(({ label, to, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}

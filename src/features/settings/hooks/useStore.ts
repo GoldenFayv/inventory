@@ -19,7 +19,7 @@ export function useUpdateStore() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (payload: CreateStorePayload) => api.patch("/store", payload),
+        mutationFn: (payload: CreateStorePayload) => api.patch("/stores", payload),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["store"] }),
     });
 }
