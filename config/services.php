@@ -41,4 +41,19 @@ return [
         'callback_url' => env('PAYSTACK_CALLBACK_URL'),
     ],
 
+    'whatsapp' => [
+        'api_version' => env('WHATSAPP_CLOUD_API_VERSION'),
+        'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),
+        'access_token' => env('WHATSAPP_ACCESS_TOKEN'),
+        'verify_token' => env('WHATSAPP_VERIFY_TOKEN'),
+        'app_secret' => env('WHATSAPP_APP_SECRET'),
+        'base_url' => env('WHATSAPP_APP_BASE_URL', "https://graph.facebook.com"),
+    ],
+
+    'termii' => [
+        'base_url' => env('TERMII_BASE_URL', 'https://api.ng.termii.com/api/sms/send'),
+        'api_key' => env('TERMII_API_KEY'),
+        'sender_id' => env('TERMII_SENDER_ID'),
+        'channel' => env('TERMII_CHANNEL', 'generic'),
+    ],
 ];

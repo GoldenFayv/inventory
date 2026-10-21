@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 // use Database\Factories\UserFactory;
 
+use App\Notifications\ResetPasswordNotification;
 use App\Traits\BelongsToLga;
 use App\Traits\HasLoginHistory;
 use Filament\Models\Contracts\FilamentUser;
@@ -39,6 +40,11 @@ class User extends Authenticatable implements FilamentUser, HasName
             'password' => 'hashed',
             'is_super_user' => 'boolean'
         ];
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 
     public function canAccessPanel(Panel $panel): bool

@@ -1,6 +1,6 @@
 @baseUrl=http://localhost:8000/api/v1
 # @baseUrl=http://10.123.224.114:8000/api/v1
-@token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIwMWExNTFmOS1iZjY4LTcyNTQtYTdkMS05OWJmNTg3ZTk2ZDkiLCJqdGkiOiJlZWUxMTg3OTAyYzM2YzEzMjA5MTRhNmQwZjdjODI4ZjU4OGNkMDE3MmVjZjM3ZTUyMWQ0OTY5NTM4OGI2YzgyZmNmYTM3Mzc1NWJiYzU0ZCIsImlhdCI6MTc5MjQ0NDIzMi4wNzE1NywibmJmIjoxNzkyNDQ0MjMyLjA3MTU3NCwiZXhwIjoxNzkyNDQ3ODMyLjA2MzgzNSwic3ViIjoiMDFhMTUxZmUtYjA0Ny03MGUzLTkzZTMtZmI2MjU5Yjk4YzZmIiwic2NvcGVzIjpbXX0.YQH7EaEb5ah3GJueDhYkCLgcslizZWrqBuzwTbFLHepRHHHzDAb3GyJiBRK4_cHhrt2eL_Vi9K7i-Uc3d6zYrxiBhkBEqbJZnabL_BV1mmLu1GIIjtLpgLe2FShixo8uWsdZzjlgVkMiFAOl1LIlyLG52HMoz3xbjpLLMAR6D-FAdfWwSDThDeHHBwLDj1Jg1P190RH-dTDhdKgEO9Yt-rzSuRfJkmOLFjsdTnNA1iyq_9tbrrnYjEwlWFALw3tw1VTmCa3vLLFeGgV4mkzkLXQqSwaeGKSXiSO2audv-SpGOMpFqUY9axbxiwyIdugQ2zFTr6bcRbceGT3Tp5xnMoNFGVozYRlagJqG9KuaH0HEiBLFiuDrLbeI-QZezLTDGI13oVTO9ITpy70K7vr9SVkACEojHYQX7ep4oA7eBlb2noptKiI0zoTmiwdOGi3ilJh9GOGddXvJI0JrjmUyTaUj6_1axODT61eVU9-cQdi4BmI86o7thV5waVAhriwxNkmnNqe0Pk0xORBByS6wnNSFKEHKGKOUqaQrTVZFjqV0gdP8REqcwZUCJZrVcJcAeTNJ76CNViPCkiVRLD1EgBv_cwGkDV9HsuPJ4pTMFPwIkssexZxGmIcbkH8P7HmrsnyrphAosqpREHg-OCo_QIN36_J2iPCWsxswiurqGmQ
+@token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIwMWExNTFmOS1iZjY4LTcyNTQtYTdkMS05OWJmNTg3ZTk2ZDkiLCJqdGkiOiJkNzBmNTEwZmQ4MzJmM2ZmZDI5NTE2MzRkZDRjM2I1OGVmMjU2YjA0MTc4NGFlOTU4MDk5NGNkYjQ0NDIyZDkxM2JjMTMxNTU2NGY1YzJjOCIsImlhdCI6MTc5MjU1MDAzOC43OTA5NDcsIm5iZiI6MTc5MjU1MDAzOC43OTA5NTEsImV4cCI6MTc5MjU1MzYzOC43NzY2NTMsInN1YiI6IjAxYTE1MWZlLWIwNDctNzBlMy05M2UzLWZiNjI1OWI5OGM2ZiIsInNjb3BlcyI6W119.I6znPLjV18kMSfUH1IWF0WcYeigYb8g8GrHUsl-9mXe4BQhwmxCsNwZv_-e97PtjOAT8ZnNiPwHHbc3OG1dCZzX2H0Bt9YL-sWBQxLjJZ4Q2JD7BnZ7LmwMGNPAKAtWzZXE5LJ_gzXrgQHG6I3oNHAVGMJp_L5v7_3FhZQ6YZfY2R3aAZ4BFE4lmnjUvmJUzOpQz8qPmCfq_8yLOwD0tqdeMpYmHD24hsx1rqBUTGeLqybLEgXdAnSb63M9Uw2JiOgpkTtmK2yfg00V-elUWKmuAJPjBIiW_zEpYutpKIrR8edWAkndmdAf-ueo4CDBn98j9NToSMxNHuJrrjDEcWHBsyUaN2HRDLhFIy1WV2z1ztkcAs6BeY_8UBS-YLiPI1I4WCwlgyK1kgaqROo8wJch76fW9a3BImcfy7-g95FKar5UEZQ5xMAu25iEIMpbSpekF_HgSaSBEBYiO0W9rqowjKH1fd5WKK40HaNwEd87DIyUy9kEfHg-7l1degqrpaH2D4uwvtJ39ukno-9xVdrFqL1gpgXB0Hu5I9NnvW4pS0dUu2bOWzzP2eb-wGfIKAlWQCqQA90cRU6UjGqYAfoGpq4vtJhoCatzO-qTjMfs5Aw28yAlST5vxYP8ISNO2h6S7miCTAP-qt0lYn5pAcB7FRb8sVoXm9hZ44b-HSX4
 
 POST {{baseUrl}}/auth/register
 Accept: application/json
@@ -21,7 +21,28 @@ Content-Type: application/json
 
 {
     "identifier": "090344030851",
-    "password": "1234567890Pp@"
+    "password": "Pa$$w0rd!"
+}
+
+### Forgot Password
+POST {{baseUrl}}/auth/forgot-password
+Accept: application/json
+Content-Type: application/json
+
+{
+    "email": "favour@golden.com"
+}
+
+### Reset Password
+POST {{baseUrl}}/auth/reset-password
+Accept: application/json
+Content-Type: application/json
+
+{
+    "token": "80f6cce9868cd661865d4fd1bc2bc66c253ed91133a45437f1794b4844a58301",
+    "password": "1234567890Pp@",
+    "password_confirmation": "1234567890Pp@",
+    "email": "favour@golden.com"
 }
 
 ### Refresh
@@ -230,3 +251,19 @@ GET  {{baseUrl}}/dashboard/summary?from=2026-10-14&to=2026-10-16
 Accept: application/json
 Content-Type: application/json
 Authorization: {{token}}
+
+### Get Notification Settings
+GET  {{baseUrl}}/settings/notifications
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+### Update Notification Settings
+PATCH   {{baseUrl}}/settings/notifications
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "whatsapp": true
+}

@@ -23,6 +23,10 @@ enum PermissionEnum: string
 
     case STORE_UPDATE = 'store.update';
 
+    case NOTIFICATIONS_SALES_RECEIVE = 'notifications.sales.receive';
+    case NOTIFICATIONS_LOW_STOCK_RECEIVE = 'notifications.low_stock.receive';
+    case NOTIFICATIONS_SUBSCRIPTION_RECEIVE = 'notifications.subscription.receive';
+
     public function middleware(): string
     {
         return "can.access:{$this->value}";
@@ -49,6 +53,11 @@ enum PermissionEnum: string
             self::STORE_UPDATE => PermissionCategoryEnum::STORE_MANAGEMENT,
 
             self::DASHBOARD_VIEW => PermissionCategoryEnum::DASHBOARD,
+
+            self::NOTIFICATIONS_SALES_RECEIVE,
+            self::NOTIFICATIONS_LOW_STOCK_RECEIVE,
+            self::NOTIFICATIONS_SUBSCRIPTION_RECEIVE
+            => PermissionCategoryEnum::NOTIFICATION_MANAGEMENT,
         };
     }
 
@@ -91,6 +100,10 @@ enum PermissionEnum: string
             self::STORE_UPDATE => 'Update store profile',
 
             self::DASHBOARD_VIEW  => 'View dashboard summary',
+
+            self::NOTIFICATIONS_SALES_RECEIVE => 'Receive sale notifications',
+            self::NOTIFICATIONS_LOW_STOCK_RECEIVE => 'Receive low-stock notifications',
+            self::NOTIFICATIONS_SUBSCRIPTION_RECEIVE => 'Receive subscription notifications',
         };
     }
 
@@ -114,6 +127,8 @@ enum PermissionEnum: string
             self::DASHBOARD_VIEW => FeatureEnum::ANALYTICS,
 
             default => FeatureEnum::INVENTORY,
+
+            self::NOTIFICATIONS_SALES_RECEIVE, self::NOTIFICATIONS_LOW_STOCK_RECEIVE, self::NOTIFICATIONS_SUBSCRIPTION_RECEIVE => app()->isLocal() ? FeatureEnum::INVENTORY : FeatureEnum::NOTIFICATION,
         };
     }
 

@@ -4,12 +4,15 @@ namespace App\Services;
 
 use App\Enum\SubscriptionPaymentStatus;
 use App\Models\SubscriptionPayment;
+use App\Models\User;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class SubscriptionPaymentService
 {
+    public function __construct(public PaystackService $paystackService, public SubscriptionService $subscriptionService, public PermissionService $permissionService) {}
     public function completePayment(SubscriptionPayment $payment, array $verifiedTransaction): SubscriptionPayment
     {
         $payment = SubscriptionPayment::query()
@@ -44,5 +47,20 @@ class SubscriptionPaymentService
         ]);
 
         return $payment->fresh();
+    }
+
+    public function verify(SubscriptionPayment $payment, User $user, string $reference): SubscriptionPayment
+    {
+        $response = $this->paystackService->verifyTransaction($reference);
+
+        return DB::transaction(function () use ($payment, $response, $user) {
+            $payment = $this->completePayment($payment, $response);
+
+            $this->subscriptionService->activateSubscription($payment);
+
+            $this->permissionService->assignPermissionToUser($user->user_store);
+
+            return $payment;
+        });
     }
 }

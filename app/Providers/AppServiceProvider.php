@@ -4,11 +4,14 @@ namespace App\Providers;
 
 use App\Enum\MorphMapEnum;
 use App\Models\Product;
+use App\Models\Store;
 use App\Models\User;
 use App\Models\UserStore;
+use App\Notifications\Channels\TrackedMailChannel;
 use Carbon\CarbonInterval;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
 
@@ -19,7 +22,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        Notification::extend('tracked-mail', function ($app) {
+            return $app->make(TrackedMailChannel::class);
+        });
     }
 
     /**
@@ -27,10 +32,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Relation::morphMap([
+        Relation::enforceMorphMap([
             MorphMapEnum::USERSTORE->value => UserStore::class,
             MorphMapEnum::USER->value => User::class,
-            MorphMapEnum::PRODUCT->value => Product::class
+            MorphMapEnum::PRODUCT->value => Product::class,
+            MorphMapEnum::STORE->value => Store::class
         ]);
 
         Passport::enablePasswordGrant();
@@ -41,12 +47,28 @@ class AppServiceProvider extends ServiceProvider
 
         Http::macro(
             'paystack',
-            fn(string $token) =>
-            Http::withToken($token)->acceptJson()
+           fn()=> Http::withToken(config('services.paystack.secret_key'))->acceptJson()
                 ->asJson()
                 ->connectTimeout(5)
                 ->timeout(20)
                 ->baseUrl(rtrim(config('services.paystack.base_url'), '/'))
+        );
+        Http::macro(
+            'whatsapp',
+            Http::withToken(config('services.whatsapp.access_token'))
+                ->acceptJson()
+                ->asJson()
+                ->timeout(15)
+                ->baseUrl(rtrim(config('services.whatsapp.base_url'), '/'))
+        );
+
+        Http::macro(
+            'termii',
+            fn(array $data) => Http::withToken(config('services.termii.api_key'))
+                ->acceptJson()
+                ->asJson()
+                ->timeout(15)
+                ->post(rtrim(config('services.termii.base_url'), '/'), $data)
         );
     }
 }

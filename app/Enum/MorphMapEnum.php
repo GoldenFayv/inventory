@@ -7,4 +7,5 @@ enum MorphMapEnum: string
     case USERSTORE = "user_store";
     case USER = "user";
     case PRODUCT = "product";
+    case STORE = "store";
 }

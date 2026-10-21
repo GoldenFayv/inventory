@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Actions\Createstore;
 use App\Actions\CreateUserStore;
 use App\Actions\SwitchStore;
+use App\Actions\UpdateStore;
 use App\Http\Resources\StoreResource;
 use App\Services\SubscriptionService;
 use Illuminate\Http\Request;
@@ -29,5 +30,10 @@ class StoreController extends Controller
         });
 
         return new StoreResource($store);
+    }
+
+    public function update(Request $request, UpdateStore $updateStore)
+    {
+        return new StoreResource($updateStore->handle($request->user(), $request->all()));
     }
 }

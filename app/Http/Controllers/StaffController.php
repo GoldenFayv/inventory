@@ -22,7 +22,7 @@ class StaffController extends Controller
         app(PermissionRegistrar::class)->setPermissionsTeamId($user->active_store_id);
 
         $staff = UserStore::with(['last_login', 'user', 'roles'])
-        ->search($request->input("search"))
+            ->search($request->input("search"))
             ->whereHas("user")
             ->whereNotNull('user_id')
             ->where('store_id', $user->active_store_id)
@@ -36,7 +36,8 @@ class StaffController extends Controller
         $data = $request->all();
 
         $data['password'] = Str::password(10);
-        $data['password'] = 'Pa$$w0rd!';
+
+        $data['password'] = app()->isLocal() ? 'Pa$$w0rd!' : bin2hex(random_bytes(4)) . '!' . chr(rand(65, 90)) . chr(rand(97, 122)) . rand(0, 9);
 
         $user = $createUser->handle($data);
 
