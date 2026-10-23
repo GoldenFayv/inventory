@@ -1,4 +1,10 @@
-import { LayoutDashboard, Package, ShoppingCart, Settings, } from "lucide-react";
+import {
+    LayoutDashboard,
+    Package,
+    ShoppingCart,
+    Settings,
+    RotateCcw,
+} from "lucide-react";
 
 export const navigation = [
     {
@@ -17,6 +23,12 @@ export const navigation = [
         label: "Sales",
         to: "/sales",
         icon: ShoppingCart,
+        permission: "sales.view",
+    },
+    {
+        label: "Sales Return",
+        to: "/sales/returns",
+        icon: RotateCcw,
         permission: "sales.view",
     },
     {

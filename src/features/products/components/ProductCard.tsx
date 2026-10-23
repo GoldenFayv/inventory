@@ -1,14 +1,14 @@
-import { memo, useCallback } from "react";
-import { Package, Pencil } from "lucide-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { memo } from "react";
+import { Package, PackagePlus, Pencil } from "lucide-react";
 import { getStockStatus } from "../utils/getStockStatus";
 import type IProduct from "../types/product.types";
-import { productService } from "../services/product.service";
 import ToggleSwitch from "../../../components/ui/ToggleSwitch";
 import { Link } from "react-router-dom";
+import { useToogleStatus } from "../useProduct";
 
 interface ProductCardProps {
   product: IProduct;
+  onRestock: (product: IProduct) => void;
 }
 
 type StockStatus = ReturnType<typeof getStockStatus>;
@@ -31,22 +31,24 @@ const STOCK_LABELS: Record<StockStatus, string> = {
   "in-stock": "In stock",
 };
 
-function ProductCard({ product }: ProductCardProps) {
+function ProductCard({ product, onRestock }: ProductCardProps) {
   const { id, name, sku, is_active, selling_price, cost_price, quantity } =
     product;
 
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
-  const {
-    mutate: toggleStatus,
-    isPending,
-    isError,
-  } = useMutation({
-    mutationFn: () => productService.toggleStatus(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["products"] }),
-  });
+  // const {
+  //   mutate: toggleStatus,
+  //   isPending,
+  //   isError,
+  // } = useMutation({
+  //   mutationFn: () => productService.toggleStatus(id),
+  //   onSuccess: () => queryClient.invalidateQueries({ queryKey: ["products"] }),
+  // });
 
-  const handleToggle = useCallback(() => toggleStatus(), [toggleStatus]);
+  const toggleStatus = useToogleStatus();
+
+  // const handleToggle = useCallback(() => toggleStatus(), [toggleStatus]);
 
   const stockStatus = getStockStatus(product);
 
@@ -85,8 +87,8 @@ function ProductCard({ product }: ProductCardProps) {
           <ToggleSwitch
             checked={is_active}
             label={`${is_active ? "Deactivate" : "Activate"} ${name}`}
-            disabled={isPending}
-            onChange={handleToggle}
+            disabled={toggleStatus.isPending}
+            onChange={() => toggleStatus.mutate(id)}
           />
         </div>
 
@@ -100,7 +102,7 @@ function ProductCard({ product }: ProductCardProps) {
         </Link>
       </div>
 
-      {isError && (
+      {toggleStatus.isError && (
         <p role="alert" className="mt-2 text-sm text-danger">
           Failed to update product status. Please try again.
         </p>
@@ -134,6 +136,14 @@ function ProductCard({ product }: ProductCardProps) {
           {STOCK_LABELS[stockStatus]}
         </span>
       </div>
+      <button
+        type="button"
+        onClick={() => onRestock(product)}
+        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-input border border-primary px-4 py-2.5 text-sm font-medium text-primary hover:bg-primary-light"
+      >
+        <PackagePlus size={17} aria-hidden="true" />
+        Restock
+      </button>
     </article>
   );
 }

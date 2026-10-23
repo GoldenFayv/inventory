@@ -24,6 +24,11 @@ import StorePage from "../features/settings/StorePage";
 import ProfilePage from "../features/settings/ProfilePage";
 import ResetPasswordPage from "../features/auth/ResetPasswordPage";
 import ForgotPasswordPage from "../features/auth/ForgotPasswordPage";
+import {
+  CreateSalesReturnPage,
+  SalesReturnDetailsPage,
+  SalesReturnsPage,
+} from "../features/sales-returns";
 
 export const router = createBrowserRouter([
   {
@@ -78,6 +83,18 @@ export const router = createBrowserRouter([
                   {
                     path: "/sales/new",
                     element: <CheckoutPage />,
+                  },
+                  {
+                    path: "/sales/returns",
+                    element: <SalesReturnsPage />,
+                  },
+                  {
+                    path: "/sales/returns/:returnId",
+                    element: <SalesReturnDetailsPage />,
+                  },
+                  {
+                    path: "/sales/:invoiceId/returns/new",
+                    element: <CreateSalesReturnPage />,
                   },
                   {
                     path: "/settings",

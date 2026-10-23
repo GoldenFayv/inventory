@@ -1,9 +1,16 @@
 import { useMemo, useState } from "react";
-import { AlertCircle, Plus, ShieldCheck } from "lucide-react";
-import { useCreateRole, usePermissions, useRoles } from "./hooks/useRoles";
+import { AlertCircle, Plus, ShieldCheck, Pencil } from "lucide-react";
+import {
+  useCreateRole,
+  usePermissions,
+  useRoles,
+  useUpdateRole,
+} from "./hooks/useRoles";
+import type { IRole } from "./types/role.types";
 
 export default function RolesPage() {
   const rolesQuery = useRoles();
+  const updateRole = useUpdateRole();
   const permissionsQuery = usePermissions();
   const createRole = useCreateRole();
 
@@ -13,7 +20,7 @@ export default function RolesPage() {
 
   const permissionCategories = useMemo(
     () => permissionsQuery.data ?? [],
-    [permissionsQuery],
+    [permissionsQuery.data],
   );
   const roles = rolesQuery.data ?? [];
 
@@ -25,24 +32,47 @@ export default function RolesPage() {
     );
   }
 
-  async function handleCreateRole(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmitRole(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const trimmedName = name.trim();
     if (!trimmedName) return;
 
-    try {
-      await createRole.mutateAsync({
-        name: trimmedName,
-        permission_ids: selectedPermissions,
-      });
+    const payload = { name: trimmedName, permission_ids: selectedPermissions };
 
-      setName("");
-      setSelectedPermissions([]);
-      setShowForm(false);
+    try {
+      if (editingRole) {
+        await updateRole.mutateAsync({ role_id: editingRole.id, ...payload });
+      } else {
+        await createRole.mutateAsync(payload);
+      }
+      resetForm();
     } catch {
-      // Mutation error is displayed below the form.
+      // Error shown below the form.
     }
+  }
+
+  const [editingRole, setEditingRole] = useState<IRole | null>(null);
+
+  const activeMutation = editingRole ? updateRole : createRole;
+
+  function resetForm() {
+    setShowForm(false);
+    setEditingRole(null);
+    setName("");
+    setSelectedPermissions([]);
+    createRole.reset();
+    updateRole.reset();
+  }
+
+  function handleEditRole(role: IRole) {
+    setEditingRole(role);
+    setName(role.name);
+    setSelectedPermissions(role.permissions?.map((p) => p.id) ?? []);
+    setShowForm(true);
+    createRole.reset();
+    updateRole.reset();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   return (
@@ -57,25 +87,35 @@ export default function RolesPage() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setShowForm((current) => !current)}
-          className="inline-flex items-center gap-2 rounded-input bg-primary px-4 py-2.5 font-medium text-white hover:bg-primary-hover"
-        >
-          <Plus size={18} />
-          Create role
-        </button>
+        {!editingRole && (
+          <button
+            type="button"
+            onClick={() => {
+              if (showForm && !editingRole) return resetForm();
+              resetForm();
+              setShowForm(true);
+            }}
+            className="inline-flex items-center gap-2 rounded-input bg-primary px-4 py-2.5 font-medium text-white hover:bg-primary-hover"
+          >
+            <Plus size={18} />
+            Create role
+          </button>
+        )}
       </header>
 
       {showForm && (
         <form
-          onSubmit={handleCreateRole}
+          onSubmit={handleSubmitRole}
           className="space-y-5 rounded-card border border-border bg-surface p-4 md:p-6"
         >
           <div>
-            <h2 className="text-lg font-semibold text-text">Create a role</h2>
+            <h2 className="text-lg font-semibold text-text">
+              {editingRole ? `Edit ${editingRole.name}` : "Create a role"}
+            </h2>
             <p className="mt-1 text-sm text-text-muted">
-              Choose a name and select the permissions this role should have.
+              {editingRole
+                ? "Update the name and permissions for this role."
+                : "Choose a name and select the permissions this role should have."}
             </p>
           </div>
 
@@ -160,21 +200,17 @@ export default function RolesPage() {
             )}
           </div>
 
-          {createRole.isError && (
+          {activeMutation.isError && (
             <p role="alert" className="text-sm text-danger">
-              Could not create the role. Check the name and try again.
+              Could not {editingRole ? "update" : "create"} the role. Check the
+              name and try again.
             </p>
           )}
 
           <div className="flex flex-wrap justify-end gap-3">
             <button
               type="button"
-              onClick={() => {
-                setShowForm(false);
-                setName("");
-                setSelectedPermissions([]);
-                createRole.reset();
-              }}
+              onClick={resetForm}
               className="rounded-input border border-border px-4 py-2.5 text-sm font-medium text-text"
             >
               Cancel
@@ -190,7 +226,11 @@ export default function RolesPage() {
               }
               className="rounded-input bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {createRole.isPending ? "Creating..." : "Save role"}
+              {activeMutation.isPending
+                ? "Saving..."
+                : editingRole
+                  ? "Update role"
+                  : "Save role"}
             </button>
           </div>
         </form>
@@ -239,7 +279,8 @@ export default function RolesPage() {
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-input bg-primary-light text-primary">
                     <ShieldCheck size={21} />
                   </div>
-                  <div className="min-w-0">
+
+                  <div className="min-w-0 flex-1">
                     <h3 className="wrap-break-word font-semibold text-text">
                       {role.name}
                     </h3>
@@ -247,6 +288,16 @@ export default function RolesPage() {
                       {role.permissions?.length ?? 0} permissions
                     </p>
                   </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleEditRole(role)}
+                    aria-label={`Edit ${role.name} role`}
+                    title="Edit role"
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-input border border-border text-text-muted transition-colors hover:bg-background hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  >
+                    <Pencil size={16} />
+                  </button>
                 </div>
 
                 {role.permissions && role.permissions.length > 0 && (

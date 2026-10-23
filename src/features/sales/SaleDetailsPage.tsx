@@ -1,12 +1,62 @@
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { AlertCircle, ArrowLeft, Printer } from "lucide-react";
 import { useSale, useUpdateSale } from "./useSales";
 import AddItemsForm from "./components/AddItemsForm";
 import PayInvoiceForm from "./components/PayInvoiceForm";
 import { useProducts } from "../products/useProduct";
-import { useEffect, useState } from "react";
 
 const money = (amount: number) => `₦${amount.toLocaleString("en-NG")}`;
+
+const STATUS = {
+  paid: { label: "Paid", className: "border-primary text-primary" },
+  partial: { label: "Part paid", className: "border-amber-600 text-amber-600" },
+  unpaid: { label: "Unpaid", className: "border-danger text-danger" },
+} as const;
+
+/** Torn paper edge. Hidden when printing. */
+function Teeth({ id, flip = false }: { id: string; flip?: boolean }) {
+  return (
+    <svg
+      aria-hidden="true"
+      width="100%"
+      height="8"
+      className={`block print:hidden ${flip ? "rotate-180" : ""}`}
+    >
+      <defs>
+        <pattern id={id} width="16" height="8" patternUnits="userSpaceOnUse">
+          <path d="M0 0H16L8 8Z" className="fill-surface" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="8" fill={`url(#${id})`} />
+    </svg>
+  );
+}
+
+function Divider() {
+  return <div className="my-5 border-t border-dashed border-border" />;
+}
+
+function Line({
+  label,
+  value,
+  strong = false,
+}: {
+  label: string;
+  value: string;
+  strong?: boolean;
+}) {
+  return (
+    <div
+      className={`flex justify-between gap-4 ${strong ? "text-base font-bold text-text" : ""}`}
+    >
+      <span className={strong ? "" : "text-text-muted"}>{label}</span>
+      <span className="min-w-0 break-all text-right tabular-nums text-text">
+        {value}
+      </span>
+    </div>
+  );
+}
 
 export default function SaleDetailsPage() {
   const { id = "" } = useParams<{ id: string }>();
@@ -28,13 +78,6 @@ export default function SaleDetailsPage() {
 
   const products = useProducts(1, debouncedSearch);
 
-  if (saleQuery.isLoading) {
-    return <p>Loading invoice...</p>;
-  }
-
-  // if (saleQuery.isError || !sale) {
-  //   return <p>Unable to load invoice.</p>;
-  // }
   function handlePayment(amount: number, method: "cash" | "transfer") {
     updateSale.mutate({ amount: amount, payment_method: method });
   }
@@ -71,10 +114,17 @@ export default function SaleDetailsPage() {
   }
 
   const balance = Math.max(0, sale.total_amount - sale.total_amount_paid);
+  const status =
+    sale.total_amount_paid >= sale.total_amount
+      ? STATUS.paid
+      : sale.total_amount_paid > 0
+        ? STATUS.partial
+        : STATUS.unpaid;
 
   return (
     <main className="space-y-6 pb-8">
-      <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
+      {/* Screen-only actions */}
+      <div className="mx-auto flex max-w-md flex-wrap items-center justify-between gap-3 print:hidden">
         <Link
           to="/sales"
           className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text"
@@ -86,279 +136,191 @@ export default function SaleDetailsPage() {
         <button
           type="button"
           onClick={() => window.print()}
-          className="inline-flex items-center gap-2 rounded-input bg-primary px-4 py-2.5 text-sm font-semibold text-white"
+          className="inline-flex items-center gap-2 rounded-input bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-hover"
         >
           <Printer size={17} />
           Print receipt
         </button>
       </div>
 
+      {/* The receipt */}
       <section
         id="sale-receipt"
-        className="mx-auto max-w-3xl overflow-hidden rounded-card border border-border bg-surface print:max-w-none print:rounded-none print:border-0"
+        className="mx-auto max-w-md drop-shadow-sm print:max-w-none print:drop-shadow-none"
       >
-        {/* Invoice heading */}
-        <header className="border-b border-border p-5 sm:p-8 print:p-6">
-          <div className="flex flex-col justify-between gap-6 sm:flex-row">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
-                Sales invoice
-              </p>
+        <Teeth id="receipt-teeth-top" flip />
 
-              <h1 className="mt-3 text-2xl font-bold text-text">
-                {sale.store?.name ?? "Store name unavailable"}
-              </h1>
+        <div className="-my-px border-x border-border bg-surface px-6 py-8 font-mono text-[13px] leading-relaxed text-text sm:px-8 print:border-0 print:px-0">
+          {/* Store */}
+          <header className="text-center">
+            <h1 className="font-sans text-xl font-bold tracking-tight">
+              {sale.store?.name ?? "Store name unavailable"}
+            </h1>
 
-              {sale.store?.address && (
-                <p className="mt-2 max-w-sm text-sm text-text-muted">
-                  {sale.store.address}
-                </p>
-              )}
-
-              {sale.store?.phone && (
-                <p className="mt-1 text-sm text-text-muted">
-                  Phone: {sale.store.phone}
-                </p>
-              )}
-
-              {sale.store?.email && (
-                <p className="text-sm text-text-muted">{sale.store.email}</p>
-              )}
-
+            <div className="mt-2 text-text-muted">
+              {sale.store?.address && <p>{sale.store.address}</p>}
               {sale.store?.zip_code && (
-                <p className="text-sm text-text-muted">
-                  Postal code: {sale.store.zip_code}
-                </p>
+                <p>Postal code: {sale.store.zip_code}</p>
+              )}
+              {sale.store?.phone && <p>Tel: {sale.store.phone}</p>}
+              {sale.store?.email && (
+                <p className="break-all">{sale.store.email}</p>
               )}
             </div>
 
-            <div className="sm:min-w-52 sm:text-right">
-              <h2 className="text-xl font-bold text-text">INVOICE</h2>
+            <p className="mt-5 font-sans text-sm font-semibold uppercase tracking-[0.25em]">
+              Sales receipt
+            </p>
+          </header>
 
-              <p className="mt-2 break-all text-sm text-text">
-                <span className="text-text-muted">Invoice no:</span>{" "}
-                {sale.reference}
-              </p>
+          <Divider />
 
-              <p className="mt-1 text-sm text-text">
-                <span className="text-text-muted">Date issued:</span>{" "}
-                {new Date(sale.generated_at).toLocaleDateString("en-NG", {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                })}
-              </p>
-
-              <p className="mt-3 inline-block rounded-full border border-border px-3 py-1 text-xs font-semibold text-text">
-                {sale.total_amount_paid >= sale.total_amount
-                  ? "PAID"
-                  : sale.total_amount_paid > 0
-                    ? "PARTIALLY PAID"
-                    : "UNPAID"}
-              </p>
-            </div>
+          {/* Sale info */}
+          <div className="space-y-1">
+            <Line label="Receipt no." value={sale.reference} />
+            <Line
+              label="Date"
+              value={new Date(sale.generated_at).toLocaleDateString("en-NG", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })}
+            />
+            <Line
+              label="Served by"
+              value={`${sale.generated_by.first_name} ${sale.generated_by.last_name}`}
+            />
           </div>
-        </header>
 
-        {/* Customer information */}
-        <section className="grid gap-5 border-b border-border p-5 sm:grid-cols-2 sm:p-8 print:p-6">
+          <Divider />
+
+          {/* Customer */}
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">
-              Bill to
-            </p>
-
-            <h2 className="mt-2 font-semibold text-text">
-              {sale.customer.name}
-            </h2>
-
-            <p className="mt-1 text-sm text-text-muted">
-              {sale.customer.phone}
-            </p>
-
+            <p className="text-text-muted">Billed to</p>
+            <p className="mt-1 font-semibold">{sale.customer.name}</p>
+            <p className="text-text-muted">{sale.customer.phone}</p>
             {sale.customer.email && (
-              <p className="mt-1 break-all text-sm text-text-muted">
-                {sale.customer.email}
-              </p>
+              <p className="break-all text-text-muted">{sale.customer.email}</p>
             )}
-
             {sale.customer.address && (
-              <p className="mt-1 whitespace-pre-line text-sm text-text-muted">
+              <p className="whitespace-pre-line text-text-muted">
                 {sale.customer.address}
               </p>
             )}
           </div>
 
-          <div className="sm:text-right">
-            <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">
-              Sale information
-            </p>
+          <Divider />
 
-            <p className="mt-2 text-sm text-text">
-              <span className="text-text-muted">Reference:</span>{" "}
-              {sale.reference}
-            </p>
+          {/* Items */}
+          <p className="mb-3 text-text-muted">Items ({sale.items.length})</p>
 
-            <p className="mt-1 text-sm text-text">
-              <span className="text-text-muted">Served by:</span>{" "}
-              {sale.generated_by.first_name} {sale.generated_by.last_name}
-            </p>
-          </div>
-        </section>
+          <ul className="space-y-3">
+            {sale.items.map((item) => (
+              <li key={item.id}>
+                <div className="flex justify-between gap-4">
+                  <span className="min-w-0 wrap-break-word font-semibold">
+                    {item.product?.name ?? "Product"}
+                  </span>
+                  <span className="shrink-0 font-semibold tabular-nums">
+                    {money(item.subtotal)}
+                  </span>
+                </div>
+                <p className="tabular-nums text-text-muted">
+                  {item.quantity} × {money(item.unit_price)}
+                </p>
+                {item.product?.sku && (
+                  <p className="text-xs text-text-muted">
+                    SKU: {item.product.sku}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
 
-        {/* Itemized invoice */}
-        <section className="p-5 sm:p-8 print:p-6">
-          <h2 className="mb-4 font-semibold text-text">Items and charges</h2>
-
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-115 text-left text-sm">
-              <thead>
-                <tr className="border-y border-border bg-background">
-                  <th className="px-3 py-3 font-semibold text-text">Item</th>
-                  <th className="px-3 py-3 text-right font-semibold text-text">
-                    Qty
-                  </th>
-                  <th className="px-3 py-3 text-right font-semibold text-text">
-                    Unit price
-                  </th>
-                  <th className="px-3 py-3 text-right font-semibold text-text">
-                    Amount
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {sale.items.map((item) => (
-                  <tr key={item.id} className="border-b border-border">
-                    <td className="px-3 py-4 text-text">
-                      <p className="font-medium">
-                        {item.product?.name ?? "Product"}
-                      </p>
-
-                      {item.product?.sku && (
-                        <p className="mt-1 text-xs text-text-muted">
-                          SKU: {item.product.sku}
-                        </p>
-                      )}
-                    </td>
-
-                    <td className="px-3 py-4 text-right text-text">
-                      {item.quantity}
-                    </td>
-
-                    <td className="px-3 py-4 text-right text-text">
-                      {money(item.unit_price)}
-                    </td>
-
-                    <td className="px-3 py-4 text-right font-medium text-text">
-                      {money(item.subtotal)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <Divider />
 
           {/* Totals */}
-          <div className="ml-auto mt-6 max-w-sm space-y-3">
-            <div className="flex justify-between gap-4 text-sm">
-              <span className="text-text-muted">Subtotal</span>
-              <span className="text-text">{money(sale.total_amount)}</span>
-            </div>
-
-            <div className="flex justify-between gap-4 border-t border-border pt-3 text-sm">
-              <span className="text-text-muted">Total due</span>
-              <span className="font-bold text-text">
-                {money(sale.total_amount)}
-              </span>
-            </div>
-
-            <div className="flex justify-between gap-4 text-sm">
-              <span className="text-text-muted">Total paid</span>
-              <span className="font-medium text-text">
-                {money(sale.total_amount_paid)}
-              </span>
-            </div>
-
-            <div className="flex justify-between gap-4 rounded-input bg-background p-3">
-              <span className="text-sm font-semibold text-text">
-                Balance outstanding
-              </span>
-              <span className="font-bold text-text">
-                {money(Math.max(0, sale.total_amount - sale.total_amount_paid))}
-              </span>
-            </div>
+          <div className="space-y-1">
+            <Line label="Total" value={money(sale.total_amount)} strong />
+            <Line label="Paid" value={money(sale.total_amount_paid)} />
+            <Line label="Balance due" value={money(balance)} strong />
           </div>
-        </section>
 
-        {/* Payment records */}
-        <section className="border-t border-border p-5 sm:p-8 print:p-6">
-          <h2 className="font-semibold text-text">Payment records</h2>
+          <div className="mt-6 flex justify-center">
+            <span
+              className={`-rotate-6 rounded-md border-2 px-4 py-1 font-sans text-lg font-extrabold uppercase tracking-widest ${status.className}`}
+            >
+              {status.label}
+            </span>
+          </div>
+
+          <Divider />
+
+          {/* Payments */}
+          <p className="mb-3 text-text-muted">Payments</p>
 
           {sale.payments.length === 0 ? (
-            <p className="mt-3 text-sm text-text-muted">
-              No payments have been recorded for this invoice.
-            </p>
+            <p className="text-text-muted">No payments recorded yet.</p>
           ) : (
-            <div className="mt-3 space-y-3">
+            <ul className="space-y-3">
               {sale.payments.map((payment) => (
-                <div
-                  key={payment.id}
-                  className="flex flex-wrap justify-between gap-3 border-b border-border pb-3 text-sm last:border-0"
-                >
-                  <div>
-                    <p className="font-medium capitalize text-text">
+                <li key={payment.id}>
+                  <div className="flex justify-between gap-4">
+                    <span className="font-semibold capitalize">
                       {payment.method}
-                    </p>
-                    <p className="mt-1 break-all text-xs text-text-muted">
-                      Payment reference: {payment.reference}
-                    </p>
+                    </span>
+                    <span className="font-semibold tabular-nums">
+                      {money(payment.amount)}
+                    </span>
                   </div>
-
-                  <p className="font-semibold text-text">
-                    {money(payment.amount)}
+                  <p className="break-all text-xs text-text-muted">
+                    Ref: {payment.reference}
                   </p>
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
           )}
-        </section>
 
-        <div className="grid gap-6 lg:grid-cols-2 p-4">
-          <section className="rounded-card border border-border bg-surface p-4">
-            <h2 className="mb-4 text-lg font-semibold text-text">
-              Pay invoice
-            </h2>
+          <Divider />
 
-            <PayInvoiceForm
-              balance={balance}
-              isPending={updateSale.isPending}
-              onSubmit={handlePayment}
-            />
-          </section>
-
-          <section className="rounded-card border border-border bg-surface p-4">
-            <h2 className="mb-4 text-lg font-semibold text-text">Add items</h2>
-
-            <AddItemsForm
-              products={products.data?.data ?? []}
-              isLoading={products.isLoading}
-              isPending={updateSale.isPending}
-              search={productSearch}
-              onSearchChange={setProductSearch}
-              onSubmit={handleAddItems}
-            />
-          </section>
+          <footer className="text-center">
+            <p className="font-sans font-semibold">
+              Thank you for your business.
+            </p>
+            <p className="mt-1 text-xs text-text-muted">
+              Please keep this receipt for your records.
+            </p>
+          </footer>
         </div>
 
-        <footer className="border-t border-border bg-background p-5 text-center sm:p-8 print:bg-white print:p-6">
-          <p className="font-semibold text-text">
-            Thank you for your business.
-          </p>
-          <p className="mt-1 text-xs text-text-muted">
-            Please keep this invoice for your records.
-          </p>
-        </footer>
+        <Teeth id="receipt-teeth-bottom" />
       </section>
+
+      {/* Actions: never printed */}
+      <div className="mx-auto grid max-w-4xl gap-4 lg:grid-cols-2 print:hidden">
+        <section className="rounded-card border border-border bg-surface p-4">
+          <h2 className="mb-4 text-lg font-semibold text-text">Pay invoice</h2>
+
+          <PayInvoiceForm
+            balance={balance}
+            isPending={updateSale.isPending}
+            onSubmit={handlePayment}
+          />
+        </section>
+
+        <section className="rounded-card border border-border bg-surface p-4">
+          <h2 className="mb-4 text-lg font-semibold text-text">Add items</h2>
+
+          <AddItemsForm
+            products={products.data?.data ?? []}
+            isLoading={products.isLoading}
+            isPending={updateSale.isPending}
+            search={productSearch}
+            onSearchChange={setProductSearch}
+            onSubmit={handleAddItems}
+          />
+        </section>
+      </div>
     </main>
   );
 }

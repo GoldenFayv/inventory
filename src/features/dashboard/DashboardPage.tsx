@@ -327,7 +327,7 @@ export default function DashboardPage() {
       </section>
 
       <section aria-label="Shop summary">
-        <div className="grid grid-cols-1 gap-3 min-[380px]:grid-cols-2 sm:gap-4 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 min-[380px]:grid-cols-2 sm:gap-4 xl:grid-cols-3">
           {cards.map((card) => (
             <SummaryCard key={card.label} {...card} />
           ))}

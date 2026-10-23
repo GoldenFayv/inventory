@@ -1,9 +1,10 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 
 import { Menu, LogOut, X } from "lucide-react";
 import { useAuth } from "../../app/AuthProvider";
 import { useState } from "react";
 import { navigation } from "./navigation";
+import Logo from "./LogoMark";
 
 export default function AppLayout() {
   const { user, logout } = useAuth();
@@ -39,9 +40,14 @@ export default function AppLayout() {
     <div className="flex h-dvh overflow-hidden bg-background text-text">
       {/* Desktop sidebar */}
       <aside className="hidden h-dvh w-64 shrink-0 overflow-y-auto border-r border-border bg-surface md:flex md:flex-col">
-        <div className="border-b border-border p-4">
-          <h1 className="text-xl font-bold text-primary">Inventory</h1>
-          <p className="mt-1 text-sm text-text-muted">Manage your shop</p>
+        <div className="relative overflow-hidden border-b border-border px-4 py-5">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -left-8 -top-10 h-32 w-32 rounded-full bg-primary/15 blur-2xl"
+          />
+          <Link to="/" aria-label="TallyHouse home" className="relative block">
+            <Logo tagline="Inventory & Sales"/>
+          </Link>
         </div>
 
         <nav className="flex-1 space-y-2 p-4">
@@ -49,7 +55,7 @@ export default function AppLayout() {
             <NavLink
               key={to}
               to={to}
-              end={to === "/"}
+              end={to === "/" || to === "/sales"}
               className={({ isActive }) =>
                 `flex items-center gap-3 rounded-input px-4 py-3 transition-colors ${
                   isActive
@@ -88,7 +94,13 @@ export default function AppLayout() {
         {/* Header */}
         <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border bg-surface px-4 md:px-8">
           <div className="flex items-center gap-3">
-            <span className="font-semibold md:hidden">Inventory</span>
+            <Link
+              to="/"
+              aria-label="TallyHouse home"
+              className="relative block font-semibold md:hidden"
+            >
+              <Logo iconOnly size={36} />
+            </Link>
             <h2>
               <span className="hidden text-lg font-bold text-text-muted md:block">
                 {store ? store.name : "Store workspace"}
@@ -149,7 +161,7 @@ export default function AppLayout() {
             <NavLink
               key={to}
               to={to}
-              end={to === "/"}
+              end={to === "/" || to === "/sales"}
               className={({ isActive }) =>
                 `flex min-h-16 flex-col items-center justify-center gap-1 text-xs ${
                   isActive ? "font-semibold text-primary" : "text-text-muted"

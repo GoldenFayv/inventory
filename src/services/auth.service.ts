@@ -38,7 +38,7 @@ export const authService = {
     },
 
     async me() {
-        const response = await api.get<IAuthApiResponse<IUser>>('/auth/me');
+        const response = await api.get<IAuthApiResponse<IUser>>('/auth/profile');
 
         return response.data.data;
     },

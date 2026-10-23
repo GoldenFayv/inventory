@@ -2,9 +2,12 @@ import { AlertCircle, Plus, RefreshCw } from "lucide-react";
 import ProductList from "./components/ProductList";
 import ProductPagination from "./components/ProductPagination";
 import ProductSearch from "./components/ProductSearch";
-import { useProducts } from "./useProduct";
+import { useProducts, useRestockProduct } from "./useProduct";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import RestockProductsDialog from "./components/RestockProductsDialog";
+import type IProduct from "./types/product.types";
+import RefreshButton from "../../components/ui/RefreshButton";
 
 function useDebouncedValue<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -23,6 +26,9 @@ function useDebouncedValue<T>(value: T, delay: number): T {
 export default function ProductsPage() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [restockProduct, setRestockProduct] = useState<IProduct | null>(null);
+
+  const useRestock = useRestockProduct();
 
   const debouncedSearch = useDebouncedValue(search, 300);
 
@@ -51,14 +57,21 @@ export default function ProductsPage() {
             Manage your products and stock.
           </p>
         </div>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            to="/products/new"
+            className="inline-flex items-center gap-2 rounded-input bg-primary px-4 py-3 text-sm font-medium text-white transition hover:opacity-90"
+          >
+            <Plus size={18} aria-hidden="true" />
+            Add product
+          </Link>
 
-        <Link
-          to="/products/new"
-          className="inline-flex items-center gap-2 rounded-input bg-primary px-4 py-3 text-sm font-medium text-white transition hover:opacity-90"
-        >
-          <Plus size={18} aria-hidden="true" />
-          Add product
-        </Link>
+          <RefreshButton
+            onRefresh={refetch}
+            isRefreshing={isFetching}
+            loadingLabel="Refreshing..."
+          />
+        </div>
       </header>
 
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -138,7 +151,13 @@ export default function ProductsPage() {
               )}
             </div>
 
-            <ProductList products={products} />
+            <ProductList
+              products={products}
+              onRestock={(product) => {
+                useRestock.reset();
+                setRestockProduct(product);
+              }}
+            />
 
             {data && (
               <ProductPagination
@@ -150,6 +169,27 @@ export default function ProductsPage() {
           </>
         )}
       </section>
+
+      {restockProduct && (
+        <RestockProductsDialog
+          key={String(restockProduct.id)}
+          initialProduct={restockProduct}
+          onClose={() => {
+            if (!useRestock.isPending) {
+              setRestockProduct(null);
+              useRestock.reset();
+            }
+          }}
+          onSubmit={(items) => useRestock.mutate(items)}
+          isPending={useRestock.isPending}
+          error={
+            useRestock.isError ? "Restocking failed. Please try again." : null
+          }
+        />
+      )}
+
+      {/* /> */}
+      {/* )} */}
     </main>
   );
 }

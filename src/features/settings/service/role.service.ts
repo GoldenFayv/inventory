@@ -1,7 +1,7 @@
 
 import { api } from "../../../lib/api";
 import type { IApiResponse } from "../../../lib/api-response.interface";
-import type { IRole, CreateRolePayload, IPermissionCategory } from "../types/role.types";
+import type { IRole, CreateRolePayload, IPermissionCategory, UpdateRolePayload } from "../types/role.types";
 
 export const roleService = {
     async getAll(): Promise<IRole[]> {
@@ -21,6 +21,11 @@ export const roleService = {
             "/roles",
             payload,
         );
+        return response.data.data;
+    },
+
+    async update(payload: UpdateRolePayload): Promise<IRole> {
+        const response = await api.patch<IApiResponse<IRole>>(`/roles/${payload.role_id}`, payload);
         return response.data.data;
     },
 };

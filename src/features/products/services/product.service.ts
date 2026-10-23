@@ -1,7 +1,7 @@
 import { api } from "../../../lib/api";
 import type { IApiResponse } from "../../../lib/api-response.interface";
 import type { IPaginatedResponse } from "../../../types/pagination.types";
-import type { CreateProductPayload, ProductFormPayload } from "../types/product.types";
+import type { CreateProductPayload, ProductFormPayload, RestockProductsPayload } from "../types/product.types";
 import type IProduct from "../types/product.types";
 
 type ProductParams = {
@@ -79,14 +79,20 @@ export const productService = {
         return response.data.data;
     },
 
-    async toggleStatus(productId: Id): Promise<void> {
+    async toggleStatus(productId: Id): Promise<boolean> {
         await api.post(`/products/${productId}/status`);
+
+        return true;
     },
 
     async getById(productId: Id): Promise<IProduct> {
         const response = await api.get<IApiResponse<IProduct>>(`products/${productId}`)
 
         return response.data.data
-    }
+    },
+
+    async restock(payload: RestockProductsPayload): Promise<void> {
+        await api.post("/products/restock", payload);
+    },
 
 };

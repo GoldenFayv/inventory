@@ -288,14 +288,14 @@ export default function StaffPage() {
                         }`}
                         disabled={isUpdatingStatus}
                         onClick={() => {
-                          if (
-                            isActive &&
-                            !window.confirm(
-                              `Deactivate ${member.user.first_name}? They will lose access to this store.`,
-                            )
-                          ) {
-                            return;
-                          }
+                          // if (
+                          //   isActive &&
+                          //   !window.confirm(
+                          //     `Deactivate ${member.user.first_name}? They will lose access to this store.`,
+                          //   )
+                          // ) {
+                          //   return;
+                          // }
 
                           setActive.mutate({
                             staffId: member.id,

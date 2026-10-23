@@ -4,7 +4,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Plus,
+  RotateCcw,
   Search,
+  Settings,
   ShoppingBag,
 } from "lucide-react";
 import { useSales } from "./useSales";
@@ -97,18 +99,32 @@ export default function SalesHistoryPage() {
   return (
     <main className="space-y-6 pb-8">
       <header className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold text-text">Sales history</h1>
-        <p className="mt-1 text-sm text-text-muted">
-          View sales, payments, and outstanding balances.
-        </p>
+        <div>
+          <h1 className="text-2xl font-bold text-text">Sales history</h1>
+          <p className="mt-1 text-sm text-text-muted">
+            View sales, payments, and outstanding balances.
+          </p>
+        </div>
 
-        <Link
-          to="/sales/new"
-          className="inline-flex items-center gap-2 rounded-input bg-primary px-4 py-3 text-sm font-medium text-white transition hover:opacity-90"
-        >
-          <Plus size={18} aria-hidden="true" />
-          Create Sale
-        </Link>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            to="/sales/new"
+            className="inline-flex items-center gap-2 rounded-input bg-primary px-4 py-3 text-sm font-medium text-white transition hover:opacity-90"
+          >
+            <Plus size={18} aria-hidden="true" />
+            Create Sale
+          </Link>
+
+          {sales.length > 0 && (
+            <Link
+              to="/sales/returns"
+              className="inline-flex items-center gap-2 rounded-input border border-border bg-surface px-4 py-3 text-sm font-medium text-text transition hover:bg-background"
+            >
+              <Settings size={18} aria-hidden="true" />
+              Manage Returns
+            </Link>
+          )}
+        </div>
       </header>
 
       <section className="space-y-4 rounded-card border border-border bg-surface p-4">
@@ -331,12 +347,22 @@ export default function SalesHistoryPage() {
                       </p>
                     </div>
                   </div>
-                  <Link
-                    to={`/sales/${sale.id}`}
-                    className="mt-4 inline-flex text-sm font-semibold text-primary hover:underline"
-                  >
-                    View details and receipt
-                  </Link>
+                  <div className="mt-4 flex flex-wrap items-center gap-4">
+                    <Link
+                      to={`/sales/${sale.id}`}
+                      className="inline-flex text-sm font-semibold text-primary hover:underline"
+                    >
+                      View details and receipt
+                    </Link>
+
+                    <Link
+                      to={`/sales/${sale.id}/returns/new`}
+                      className="inline-flex items-center gap-2 rounded-input border border-border bg-surface px-3 py-2 text-sm font-medium text-text transition hover:bg-background"
+                    >
+                      <RotateCcw size={16} aria-hidden="true" />
+                      Return Items
+                    </Link>
+                  </div>
                 </article>
               );
             })}

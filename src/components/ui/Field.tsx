@@ -11,6 +11,7 @@ type FieldProps = {
   autoComplete?: string;
   className?: string;
   hint?: string;
+  id?: string
 };
 
 export default function Field({
@@ -25,13 +26,15 @@ export default function Field({
   autoComplete,
   className = "",
   hint,
-  readOnly
+  readOnly,
+  id
 }: FieldProps) {
   return (
-    <label className={`block space-y-1 ${className}`}>
+    <label className={`block space-y-1 ${className}`} htmlFor={id}>
       <span className="text-sm font-medium text-text">{label}</span>
       <input
         required={required}
+        id={id}
         readOnly={readOnly}
         type={type}
         value={value}

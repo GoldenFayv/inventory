@@ -1,7 +1,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { roleService } from "../service/role.service";
-import type { CreateRolePayload } from "../types/role.types";
+import type { CreateRolePayload, UpdateRolePayload } from "../types/role.types";
 
 export function useRoles() {
     return useQuery({
@@ -31,5 +31,14 @@ export function useCreateRole() {
                 queryKey: ["roles"],
             });
         },
+    });
+}
+
+export function useUpdateRole() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (payload: UpdateRolePayload) => roleService.update(payload), // use your own client/endpoint
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["roles"] }),
     });
 }

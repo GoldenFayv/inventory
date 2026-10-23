@@ -10,7 +10,7 @@ export function useUpdateProfile() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (payload: UpdateProfilePayload) => api.patch("/profile", payload),
+        mutationFn: (payload: UpdateProfilePayload) => api.patch("/auth/profile", payload),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["profile"] }),
     });
 }
@@ -24,6 +24,6 @@ export type ChangePasswordPayload = {
 export function useChangePassword() {
     return useMutation({
         mutationFn: (payload: ChangePasswordPayload) =>
-            api.put("/profile/password", payload),
+            api.put("/auth/profile/password", payload),
     });
 }

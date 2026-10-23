@@ -28,12 +28,21 @@ export interface UpdateProductPayload extends Partial<CreateProductPayload> {
 }
 
 export interface ProductFormPayload {
-  name: string;
-  sku: string | null;
-  selling_price: number;
-  cost_price: number;
-  low_stock_threshold: number;
-  opening_quantity?: number;
-  images: File[];
-  remove_media_ids: Id[];
+    name: string;
+    sku: string | null;
+    selling_price: number;
+    cost_price: number;
+    low_stock_threshold: number;
+    opening_quantity?: number;
+    images: File[];
+    remove_media_ids: Id[];
+}
+
+export interface RestockProductItem {
+    product_id: Id;
+    quantity: number;
+}
+
+export interface RestockProductsPayload {
+    products: RestockProductItem[];
 }

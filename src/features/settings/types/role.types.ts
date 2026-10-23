@@ -22,3 +22,9 @@ export interface CreateRolePayload {
     name: string;
     permission_ids: string[];
 }
+
+export interface UpdateRolePayload {
+    name?: string;
+    permission_ids?: string[];
+    role_id: Id;
+}

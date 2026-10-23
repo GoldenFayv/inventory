@@ -4,9 +4,10 @@ import type IProduct from "../types/product.types";
 
 interface ProductListProps {
   products: IProduct[];
+  onRestock: (product: IProduct) => void;
 }
 
-export default function ProductList({ products }: ProductListProps) {
+export default function ProductList({ products, onRestock }: ProductListProps) {
   if (products.length === 0) {
     return (
       <div className="rounded-card border border-dashed border-border bg-surface px-5 py-12 text-center">
@@ -26,7 +27,7 @@ export default function ProductList({ products }: ProductListProps) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard key={product.id} product={product} onRestock={onRestock} />
       ))}
     </div>
   );
