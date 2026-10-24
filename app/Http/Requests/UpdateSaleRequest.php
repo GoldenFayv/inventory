@@ -14,6 +14,7 @@ class UpdateSaleRequest extends FormRequest
 
     public function rules(): array
     {
+        logger("Req", $this->all());
         return [
             'amount' => ['sometimes', 'integer', 'min:0'],
 

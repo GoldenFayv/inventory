@@ -12,9 +12,11 @@ use App\DataTransferObjects\UpdateSalePayload;
 use App\Enum\StockMovementType;
 use App\Models\Invoice;
 use App\Models\Product;
+use App\Models\SalesReturn;
 use App\Models\User;
 use App\Services\SalesServiceValidator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class SalesService
 {
@@ -31,8 +33,9 @@ class SalesService
             $products = Product::query()->where('store_id', $store->id)->whereIn('id', $productIds)->orderBy('id')->lockForUpdate()->get()->keyBy('id');
 
             $validated = $this->salesService->validateSales($products, $itemsByProductId, (array) $data);
-            $invoice = $this->getInvoice->handle($user, $validated);
             
+            $invoice = $this->getInvoice->handle($user, $validated);
+
             $items = $this->attachItemsToInvoice->handle($invoice, $validated['prepared_items']);
 
             $this->recordStockMovement->handle($user, StockMovementItem::collect($items->toArray()), StockMovementType::Sale);
@@ -56,6 +59,12 @@ class SalesService
     {
         return DB::transaction(function () use ($user, $invoiceId, $data): Invoice {
             $invoice = Invoice::where('store_id', $user->active_store_id)->lockForUpdate()->findOrFail($invoiceId);
+
+            if (! empty($data->items) && SalesReturn::query()->where('invoice_id', $invoice->id)->exists()) {
+                throw ValidationException::withMessages([
+                    'items' => ['Invoice items cannot be changed after a sales return has been requested.'],
+                ]);
+            }
 
             $store = $user->active_store;
 

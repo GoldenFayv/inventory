@@ -19,7 +19,9 @@ class AuthController extends Controller
     {
         $response = $this->login->handle($request->all());
 
-        LoginEvent::dispatch($response['user'], LoginContext::fromRequest($request, $response['access_token']));
+        logger("L", $response);
+
+        LoginEvent::dispatch($response['user'], LoginContext::fromRequest($request, $response['access_token']), $response['user']['user_store']['id']);
 
         return new UserResource($response['user'])->additional([
             'access_token' => $response['access_token'],

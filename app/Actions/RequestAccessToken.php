@@ -26,7 +26,7 @@ class RequestAccessToken
 
         if ($response->getStatusCode() === 400 && $validated['grant_type'] === "password") {
             throw ValidationException::withMessages([
-                "identifier" => "The credentials are wrong!"
+                "identifier" => "Incorrect credentials!"
             ]);
         }
 

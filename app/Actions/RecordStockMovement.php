@@ -9,6 +9,7 @@ use App\Models\StockMovement;
 use App\Models\User;
 use App\Services\StockMovementValidator;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -20,7 +21,7 @@ class RecordStockMovement
      * @param  Collection<string, StockMovementItem>  $items
      * @return Collection<int, StockMovement>
      */
-    public function handle(User $user, Collection $items, StockMovementType $type): Collection
+    public function handle(User $user, Collection $items, StockMovementType $type, ?Model $reference = null): Collection
     {
         $storeId = $user->active_store_id;
 
@@ -30,8 +31,7 @@ class RecordStockMovement
 
         $this->validator->validateItems($items);
 
-        return DB::transaction(function () use ($user, $items, $type, $storeId) {
-            // Tenant-scoped, ordered by id so overlapping batches lock in the same order
+        return DB::transaction(function () use ($user, $items, $type, $storeId, $reference): Collection {
             $products = Product::where('store_id', $storeId)
                 ->whereIn('id', $items->pluck('productId'))
                 ->orderBy('id')
@@ -42,12 +42,14 @@ class RecordStockMovement
             $this->validator->ensureProductsExist($items, $products);
             $this->validator->ensureStockRules($storeId, $items, $type);
 
-            $rows = $items->map(fn(StockMovementItem $item) => [
+            $rows = $items->map(fn(StockMovementItem $item): array => [
                 'product_id'    => $item->productId,
                 'user_id'       => $user->id,
                 'store_id'      => $storeId,
                 'movement_type' => $type,
                 'quantity'      => $type->signedQuantity($item->quantity),
+                'reference_type' => $reference?->getMorphClass(),
+                'reference_id' => $reference?->getKey(),
             ]);
 
             return $user->stock_movements()->createMany($rows);

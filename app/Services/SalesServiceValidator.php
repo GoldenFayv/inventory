@@ -44,7 +44,8 @@ class SalesServiceValidator
                 ]);
             }
 
-            $unitPrice = $product->selling_price;
+            $unitPrice = $data['unit_price'] ?? $product->selling_price;
+
             $subtotal = $unitPrice * $quantity;
 
             $data['total_amount'] += $subtotal;
@@ -54,6 +55,7 @@ class SalesServiceValidator
                 'quantity' => $quantity,
                 'unit_price' => $unitPrice,
                 'subtotal' => $subtotal,
+                'asking_price' => $product->selling_price,
             ];
         }
 

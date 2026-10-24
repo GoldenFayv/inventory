@@ -16,7 +16,9 @@ return new class extends Migration
             $table->foreignUuid('invoice_id')->constrained('invoices')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignUuid('product_id')->constrained('products')->onDelete('cascade')->onUpdate('cascade');
             $table->integer('quantity');
+            $table->unsignedInteger('returned_quantity')->default(0);
             $table->integer('unit_price');
+            $table->integer('asking_price');
             $table->integer('subtotal');
             $table->timestamps();
         });

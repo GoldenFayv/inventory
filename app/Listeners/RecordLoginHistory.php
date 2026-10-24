@@ -29,7 +29,7 @@ class RecordLoginHistory implements ShouldQueue
         if ($event->loginContext->user_store_id) {
             LoginHistory::create([
                 'reference_id' => $event->loginContext->user_store_id,
-                'reference_type' => UserStore::class,
+                'reference_type' => (new UserStore())->getMorphClass(),
                 'ip' => $event->loginContext->ip,
                 'user_agent' => $event->loginContext->user_agent,
                 'logged_in_at' => now(),
@@ -37,12 +37,14 @@ class RecordLoginHistory implements ShouldQueue
         }
 
         LoginHistory::create([
-            'reference_id' => $event->user->id,
-            'reference_type' => User::class,
+            'reference_id' => $event->user->getKey(),
+            'reference_type' => $event->user->getMorphClass(),
             'ip_address' => $event->loginContext->ip,
             'user_agent' => $event->loginContext->user_agent,
             "token" => $event->loginContext->token,
             'logged_in_at'  => now(),
         ]);
+
+        logger("DONE");
     }
 }

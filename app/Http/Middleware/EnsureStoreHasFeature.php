@@ -25,7 +25,7 @@ class EnsureStoreHasFeature
             return response()->json([
                 'message' => 'Your current subscription does not include this feature, or your subscription has expired.',
                 'feature' => $feature,
-            ], 403);
+            ], 402);
         }
 
         return $next($request);

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable('invoice_id', 'product_id', 'quantity', 'unit_price', 'subtotal')]
+#[Fillable('invoice_id', 'product_id', 'quantity', 'unit_price', 'subtotal', 'returned_quantity', 'asking_price')]
 class InvoiceItem extends Model
 {
     use HasUuids;

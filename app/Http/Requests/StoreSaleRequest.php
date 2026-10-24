@@ -35,6 +35,7 @@ class StoreSaleRequest extends FormRequest
             'items' => ['required', 'array', 'min:1'],
             'items.*.product_id' => ['required', 'uuid', 'distinct', Rule::exists("products", "id")->where("store_id", $this->user()->active_store_id)->where('is_active', true),],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
+            'items.*.unit_price' => ['sometimes', 'integer'],
         ];
     }
 }

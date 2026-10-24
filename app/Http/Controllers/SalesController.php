@@ -38,7 +38,7 @@ class SalesController extends Controller
     {
         $user = $request->user();
 
-        $invoice = Invoice::with(["items", "generatedBy", "payments", "store"])->where('store_id', $user->active_store_id)->find($invoiceId);
+        $invoice = Invoice::with(["items.product", "generatedBy", "payments", "store"])->where('store_id', $user->active_store_id)->findOrFail($invoiceId);
 
         return new InvoiceResource($invoice);
     }

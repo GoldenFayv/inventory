@@ -11,6 +11,9 @@ enum PermissionEnum: string
     case SALES_CREATE = 'sales.create';
     case SALES_UPDATE = 'sales.update';
     case SALES_VIEW = 'sales.view';
+    case SALES_RETURNS_VIEW = 'sales.returns.view';
+    case SALES_RETURNS_CREATE = 'sales.returns.create';
+    case SALES_RETURNS_APPROVE = 'sales.returns.approve';
 
     case ROLE_CREATE = 'role.create';
     case ROLE_VIEW = 'role.view';
@@ -41,7 +44,10 @@ enum PermissionEnum: string
 
             self::SALES_VIEW,
             self::SALES_CREATE,
-            self::SALES_UPDATE => PermissionCategoryEnum::SALES_MANAGEMENT,
+            self::SALES_UPDATE,
+            self::SALES_RETURNS_CREATE,
+            self::SALES_RETURNS_VIEW,
+            self::SALES_RETURNS_APPROVE => PermissionCategoryEnum::SALES_MANAGEMENT,
 
             self::ROLE_VIEW,
             self::ROLE_CREATE => PermissionCategoryEnum::ROLE_MANAGEMENT,
@@ -89,6 +95,9 @@ enum PermissionEnum: string
             self::SALES_VIEW      => 'View sales records',
             self::SALES_CREATE    => 'Record sales',
             self::SALES_UPDATE    => 'Update sales records',
+            self::SALES_RETURNS_APPROVE => 'Approve or reject customer returns',
+            self::SALES_RETURNS_CREATE => 'Request Sales Return',
+            self::SALES_RETURNS_VIEW => 'View Sales Returns',
 
             self::ROLE_VIEW       => 'View roles',
             self::ROLE_CREATE     => 'Create new roles',
@@ -128,7 +137,13 @@ enum PermissionEnum: string
 
             default => FeatureEnum::INVENTORY,
 
-            self::NOTIFICATIONS_SALES_RECEIVE, self::NOTIFICATIONS_LOW_STOCK_RECEIVE, self::NOTIFICATIONS_SUBSCRIPTION_RECEIVE => app()->isLocal() ? FeatureEnum::INVENTORY : FeatureEnum::NOTIFICATION,
+            self::NOTIFICATIONS_SALES_RECEIVE,
+            self::NOTIFICATIONS_LOW_STOCK_RECEIVE,
+            self::NOTIFICATIONS_SUBSCRIPTION_RECEIVE => app()->isLocal() ? FeatureEnum::INVENTORY : FeatureEnum::NOTIFICATION,
+
+            self::SALES_RETURNS_CREATE,
+            self::SALES_RETURNS_VIEW,
+            self::SALES_RETURNS_APPROVE => FeatureEnum::SALES_RETURNS,
         };
     }
 

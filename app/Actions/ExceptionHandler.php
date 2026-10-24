@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -21,9 +20,9 @@ class ExceptionHandler
 
         $exceptions->render(fn(AuthorizationException $e, Request $request): JsonResponse|null => self::json($request, $e->getMessage() ?: 'Access denied', 403));
 
-        $exceptions->render(fn(ModelNotFoundException|NotFoundHttpException $e, Request $request): JsonResponse|null => self::json($request, 'Resource not found', 404));
+        // $exceptions->render(fn(ModelNotFoundException|NotFoundHttpException $e, Request $request): JsonResponse|null => self::json($request, 'Resource not found', 404));
 
-        $exceptions->render(fn(ValidationException $e, Request $request): JsonResponse|null => self::json($request, 'Validation failed', 422, ['errors' => $e->errors()]));
+        // $exceptions->render(fn(ValidationException $e, Request $request): JsonResponse|null => self::json($request, 'Validation failed', 422, ['errors' => $e->errors()]));
 
         $exceptions->render(fn(PermissionDoesNotExist $e, Request $request): JsonResponse|null => self::json($request, 'Permission does not exist!', 422));
 
@@ -32,6 +31,7 @@ class ExceptionHandler
 
         $exceptions->render(function (\Throwable $e, Request $request): JsonResponse|null {
             if (config('app.debug')) {
+                logger("Throwable", [$e]);
                 return null; // let Laravel show the trace
             }
 

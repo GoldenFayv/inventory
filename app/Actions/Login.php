@@ -11,7 +11,7 @@ class Login
     {
         $validated = Validator::make($payload, [
             'identifier' => ['required'],
-            'password' => ['required', 'min:8', Password::min(8)->numbers()->mixedCase()->symbols()]
+            'password' => ['required', 'min:8', Password::min(8)->mixedCase()->numbers()->symbols()]
         ])->validate();
 
         $validated['username'] = $validated['identifier'];

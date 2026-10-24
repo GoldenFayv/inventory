@@ -10,6 +10,8 @@ enum FeatureEnum: string
     case ANALYTICS = 'analytics';
     case NOTIFICATION = "notification";
 
+    case SALES_RETURNS = 'sales_returns';
+
 
     public function middleware(): string
     {

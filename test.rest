@@ -1,6 +1,6 @@
 @baseUrl=http://localhost:8000/api/v1
 # @baseUrl=http://10.123.224.114:8000/api/v1
-@token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIwMWExNTFmOS1iZjY4LTcyNTQtYTdkMS05OWJmNTg3ZTk2ZDkiLCJqdGkiOiJkNzBmNTEwZmQ4MzJmM2ZmZDI5NTE2MzRkZDRjM2I1OGVmMjU2YjA0MTc4NGFlOTU4MDk5NGNkYjQ0NDIyZDkxM2JjMTMxNTU2NGY1YzJjOCIsImlhdCI6MTc5MjU1MDAzOC43OTA5NDcsIm5iZiI6MTc5MjU1MDAzOC43OTA5NTEsImV4cCI6MTc5MjU1MzYzOC43NzY2NTMsInN1YiI6IjAxYTE1MWZlLWIwNDctNzBlMy05M2UzLWZiNjI1OWI5OGM2ZiIsInNjb3BlcyI6W119.I6znPLjV18kMSfUH1IWF0WcYeigYb8g8GrHUsl-9mXe4BQhwmxCsNwZv_-e97PtjOAT8ZnNiPwHHbc3OG1dCZzX2H0Bt9YL-sWBQxLjJZ4Q2JD7BnZ7LmwMGNPAKAtWzZXE5LJ_gzXrgQHG6I3oNHAVGMJp_L5v7_3FhZQ6YZfY2R3aAZ4BFE4lmnjUvmJUzOpQz8qPmCfq_8yLOwD0tqdeMpYmHD24hsx1rqBUTGeLqybLEgXdAnSb63M9Uw2JiOgpkTtmK2yfg00V-elUWKmuAJPjBIiW_zEpYutpKIrR8edWAkndmdAf-ueo4CDBn98j9NToSMxNHuJrrjDEcWHBsyUaN2HRDLhFIy1WV2z1ztkcAs6BeY_8UBS-YLiPI1I4WCwlgyK1kgaqROo8wJch76fW9a3BImcfy7-g95FKar5UEZQ5xMAu25iEIMpbSpekF_HgSaSBEBYiO0W9rqowjKH1fd5WKK40HaNwEd87DIyUy9kEfHg-7l1degqrpaH2D4uwvtJ39ukno-9xVdrFqL1gpgXB0Hu5I9NnvW4pS0dUu2bOWzzP2eb-wGfIKAlWQCqQA90cRU6UjGqYAfoGpq4vtJhoCatzO-qTjMfs5Aw28yAlST5vxYP8ISNO2h6S7miCTAP-qt0lYn5pAcB7FRb8sVoXm9hZ44b-HSX4
+@token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIwMWExNWM4OC00NTJlLTcwYjAtYTY4MS1jMjYxNWQwZWFmMzgiLCJqdGkiOiIyNDkwYmJkOWU4ODE1YTA1ZGIxMGM4ZjRjMDgwYTVhNjc4NWFiMDcwZWMxZTBiMTBjYThiOTE5MGY0ODY1NzMzMzc5ODRkNTJlNmFkZTk0YSIsImlhdCI6MTc5MjYxNzU0OS4wMzQwNzgsIm5iZiI6MTc5MjYxNzU0OS4wMzQwODEsImV4cCI6MTc5MjYyMTE0OS4wMjM1OTIsInN1YiI6IjAxYTE1YzhjLTlmYWMtNzBlNi05Njc4LWU2YjljZDFiODc0ZiIsInNjb3BlcyI6W119.k02AoGFhU1AKYdaoSvbx20xaTSTi6jAXmasy0L9m1uaPCY05hMeAJiFWkUP5CBl-pttMVHdQMPYUt3pnTtB5ezM5te8c9y9Rj8E9yivUzZ8jBX_JxEhg5jiCLlIBzBO7tJPwJmD6gzZZuRO_QkZYbTstTOv60b37LNLjHBdsMxmfzxacaWVaRI7T8RhE_Lq5I2IKCx8KNuUpcY0k3-jSML9c3oJ2UYOj_eIHjOULKRT4JzcIN5UHPEsgrBgEHyBMqjuvoI4imw0R1IQ43G4-a5TaMqhmh2SAwMccaZIddSQe1qjk3Ls58RxQ7jteA24Dlu2tIrKZ6kD2BSjNkN9Hn-wq_nmbRhIHPV7WlHIBh1jOVig8ayaIhLK6jSvDzN-DDAPH7htaJiHz6s0tsfphbPwTl3CGbT9bLOWOd6u3CdBQNr6OOddGVHGKNRbjlGKRk3u_u7AwPvVRXDbh29Wqa0F1qSooOV0uOQZ4DIetMPBB5XuPfws_e-2svvUijiI-AFcvMKGljUBfzHetuQOrCupKDa-8Af0hi8o4q1_JGEzaxb_89XwOAeYIrYi9gWpGmWHUfh0J2dxQBvPCrXnuOKoj-BoR5d-vP8t9ZwwDZYXc5gV4fPPHT9KxSPpjbA7WPadK_9NUjz4bJEYKHweE2nor59LQsUAjxyTaxdKj8to
 
 POST {{baseUrl}}/auth/register
 Accept: application/json
@@ -20,7 +20,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "identifier": "090344030851",
+    "identifier": "favour@golden.com",
     "password": "Pa$$w0rd!"
 }
 
@@ -51,7 +51,7 @@ Accept: application/json
 Content-Type: application/json
 
 ### Fetch Profile
-GET  {{baseUrl}}/auth/me
+GET  {{baseUrl}}/auth/profile
 Accept: application/json
 Content-Type: application/json
 Authorization: {{token}}
@@ -179,10 +179,25 @@ Content-Type: application/json
 Authorization: {{token}}
 
 ### Get Products by Id
-GET {{baseUrl}}/products/01a13c7d-557e-70a7-8af9-a9a20ce8263b
+GET {{baseUrl}}/products/01a16056-6331-7268-9b69-da3dfd87a72e
 Accept: application/json
 Content-Type: application/json
 Authorization: {{token}}
+
+### Restock Products
+POST {{baseUrl}}/products/restock
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+    "products": [
+        {
+            "product_id": "01a16056-6331-7268-9b69-da3dfd87a72e",
+            "quantity": 10
+        }
+    ]
+}
 
 ### Get State
 GET {{baseUrl}}/states

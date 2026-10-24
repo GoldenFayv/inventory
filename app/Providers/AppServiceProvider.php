@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Enum\MorphMapEnum;
 use App\Models\Product;
+use App\Models\SalesReturn;
 use App\Models\Store;
 use App\Models\User;
 use App\Models\UserStore;
@@ -36,7 +37,8 @@ class AppServiceProvider extends ServiceProvider
             MorphMapEnum::USERSTORE->value => UserStore::class,
             MorphMapEnum::USER->value => User::class,
             MorphMapEnum::PRODUCT->value => Product::class,
-            MorphMapEnum::STORE->value => Store::class
+            MorphMapEnum::STORE->value => Store::class,
+            MorphMapEnum::SALERETURN->value => SalesReturn::class,
         ]);
 
         Passport::enablePasswordGrant();
