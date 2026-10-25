@@ -12,7 +12,7 @@ return new class extends Migration
         Schema::create('subscription_plan_prices', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
-            $table->foreignUuid('subscription_plan_id')->constrained('subscription_plans')->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignUuid('subscription_plan_id')->constrained('subscription_plans')->cascadeOnUpdate()->cascadeOnDelete();
 
             $table->string('billing_interval'); // monthly, yearly
             $table->unsignedBigInteger('price');

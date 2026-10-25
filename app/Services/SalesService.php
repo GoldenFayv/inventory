@@ -43,7 +43,7 @@ class SalesService
             if ($validated['amount'] > 0) {
                 $this->createPayment->handle($invoice, $validated['amount'], $validated['payment_method']);
             }
-
+            
             return $invoice->calculateTotals()->load('items.product', 'payments');
         });
     }

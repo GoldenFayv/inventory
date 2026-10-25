@@ -18,7 +18,7 @@ enum PermissionEnum: string
     case ROLE_CREATE = 'role.create';
     case ROLE_VIEW = 'role.view';
 
-    case DASHBOARD_VIEW = 'dashboard.view';
+    // case DASHBOARD_VIEW = 'dashboard.view';
 
     case STAFF_CREATE = 'staff.create';
     case STAFF_UPDATE = 'staff.update';
@@ -58,7 +58,7 @@ enum PermissionEnum: string
 
             self::STORE_UPDATE => PermissionCategoryEnum::STORE_MANAGEMENT,
 
-            self::DASHBOARD_VIEW => PermissionCategoryEnum::DASHBOARD,
+
 
             self::NOTIFICATIONS_SALES_RECEIVE,
             self::NOTIFICATIONS_LOW_STOCK_RECEIVE,
@@ -108,8 +108,6 @@ enum PermissionEnum: string
 
             self::STORE_UPDATE => 'Update store profile',
 
-            self::DASHBOARD_VIEW  => 'View dashboard summary',
-
             self::NOTIFICATIONS_SALES_RECEIVE => 'Receive sale notifications',
             self::NOTIFICATIONS_LOW_STOCK_RECEIVE => 'Receive low-stock notifications',
             self::NOTIFICATIONS_SUBSCRIPTION_RECEIVE => 'Receive subscription notifications',
@@ -133,13 +131,11 @@ enum PermissionEnum: string
             self::STAFF_CREATE,
             self::STAFF_UPDATE => FeatureEnum::STAFF_MANAGEMENT,
 
-            self::DASHBOARD_VIEW => FeatureEnum::ANALYTICS,
-
             default => FeatureEnum::INVENTORY,
 
-            self::NOTIFICATIONS_SALES_RECEIVE,
-            self::NOTIFICATIONS_LOW_STOCK_RECEIVE,
-            self::NOTIFICATIONS_SUBSCRIPTION_RECEIVE => app()->isLocal() ? FeatureEnum::INVENTORY : FeatureEnum::NOTIFICATION,
+            // self::NOTIFICATIONS_SALES_RECEIVE,
+            // self::NOTIFICATIONS_LOW_STOCK_RECEIVE,
+            // self::NOTIFICATIONS_SUBSCRIPTION_RECEIVE => app()->isLocal() ? FeatureEnum::INVENTORY : FeatureEnum::NOTIFICATION,
 
             self::SALES_RETURNS_CREATE,
             self::SALES_RETURNS_VIEW,

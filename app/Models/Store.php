@@ -28,7 +28,7 @@ class Store extends MyBaseModel
 
     public function hasFeature(FeatureEnum $feature): bool
     {
-        return once(fn(): mixed => $this->plan?->features->pluck('feature')->all() ?? [])
+        return once(fn(): mixed => $this->plan?->features->where('is_enabled', true)->pluck('feature')->all() ?? [])
         |> (fn($features) => \in_array($feature, $features, true));
     }
 

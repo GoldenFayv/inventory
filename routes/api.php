@@ -1,6 +1,7 @@
 <?php
 
 use App\Enum\FeatureEnum;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\Subscription\ActivateFreeTrialController;
@@ -19,6 +20,7 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::middleware('auth:user')->group(function () {
+        Route::get("dashboard/summary", DashboardController::class);
         Route::prefix('settings')->group(function () {
             require_once base_path("routes/settings.api.php");
         });

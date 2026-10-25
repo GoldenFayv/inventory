@@ -4,21 +4,21 @@ namespace App\Actions;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ExceptionHandler
 {
     public static function register(Exceptions $exceptions): void
     {
-        $exceptions->render(fn(AuthenticationException $e, Request $request): JsonResponse|null => self::json($request, 'Unauthenticated', 401));
+        $exceptions->render(fn(AuthenticationException $e, Request $request): JsonResponse|null => self::json($request, $e->getMessage(), 401));
 
         $exceptions->render(fn(AuthorizationException $e, Request $request): JsonResponse|null => self::json($request, $e->getMessage() ?: 'Access denied', 403));
+        $exceptions->render(fn(ConnectionException $e, Request $request): JsonResponse|null => self::json($request, 'Connection error', 500));
 
         // $exceptions->render(fn(ModelNotFoundException|NotFoundHttpException $e, Request $request): JsonResponse|null => self::json($request, 'Resource not found', 404));
 

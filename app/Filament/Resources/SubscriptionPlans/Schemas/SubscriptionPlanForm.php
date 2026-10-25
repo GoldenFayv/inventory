@@ -36,7 +36,7 @@ class SubscriptionPlanForm
                     ->required(),
 
                 Repeater::make('prices')
-                    ->relationship()
+                    // ->relationship()
                     ->label('Pricing Options')
                     ->schema([
                         Select::make('billing_interval')
@@ -53,12 +53,12 @@ class SubscriptionPlanForm
                             ->label('Price (₦)')
                             ->numeric()
                             ->minValue(0)
-                            ->required()
-                            ->formatStateUsing(
-                                fn($state) => $state === null
-                                    ? null
-                                    : toNaira($state)
-                            ),
+                            ->required(),
+                            // ->formatStateUsing(
+                            //     fn($state) => $state === null
+                            //         ? null
+                            //         : toNaira($state)
+                            // ),
 
                         Select::make('currency')
                             ->options([
@@ -78,7 +78,7 @@ class SubscriptionPlanForm
                     ->collapsible(),
 
                 Repeater::make('features')
-                    ->relationship()
+                    // ->relationship()
                     ->label('Plan Features')
                     ->schema([
                         Select::make('feature')

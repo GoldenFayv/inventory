@@ -19,7 +19,7 @@ class InvoiceItemResource extends JsonResource
             "quantity" => $this->quantity,
             "unit_price" => $this->unit_price_naira,
             "subtotal" => $this->subtotal_naira,
-            "product" => $this->whenLoaded("product", fn(): ProductResource => new ProductResource($this->product))
+            "product" => $this->whenLoaded("product", fn(): ItemProductResource => new ItemProductResource($this->product, $this->unit_price_naira))
         ];
     }
 }

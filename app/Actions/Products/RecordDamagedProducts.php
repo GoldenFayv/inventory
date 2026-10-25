@@ -19,6 +19,7 @@ class RecordDamagedProducts
             $movementData = $damagedItems->map(fn($item) => [
                 'product_id' => $item->product_id,
                 'quantity'   => $item->damaged_quantity,
+                'unit_price' => $item->unit_price,
             ])->all();
 
             $this->recordStockMovement->handle($user, StockMovementItem::collect($movementData), StockMovementType::DamagedGoods, $reference);

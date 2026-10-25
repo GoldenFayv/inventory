@@ -2,14 +2,12 @@
 
 use App\Enum\PermissionEnum;
 use App\Http\Controllers\AssignRoleController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\ToggleUserStatusController;
 use Illuminate\Support\Facades\Route;
 
-Route::get("dashboard/summary", DashboardController::class)->middleware([PermissionEnum::DASHBOARD_VIEW->middleware()]);
 Route::get('permissions', PermissionController::class);
 Route::prefix('roles')->group(function () {
     Route::get('', [RoleController::class, 'index'])->middleware(PermissionEnum::ROLE_VIEW->middleware());

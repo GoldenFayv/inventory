@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(
-    'plan_id',
+    'subscription_plan_id',
     'billing_interval',
     'price',
     'currency',

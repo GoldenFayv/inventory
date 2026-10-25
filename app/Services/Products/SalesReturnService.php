@@ -148,6 +148,7 @@ class SalesReturnService
                 $movementData = $validItems->map(fn($item) => [
                     'product_id' => $item->product_id,
                     'quantity'   => $item->restock_quantity,
+                    'unit_price' => $item->unit_price
                 ])->all();
 
                 $this->recordStockMovement->handle($user, StockMovementItem::collect($movementData), StockMovementType::CustomerReturn, $salesReturn);

@@ -13,7 +13,7 @@ final readonly class LoginContext
         public ?string $user_agent = null,
     ) {}
 
-    public static function fromRequest(Request $request, string $token, ?string $userStoreId = null): self
+    public static function fromRequest(Request $request, string $token): self
     {
         return new self(
             user_store_id: $request->user()?->user_store?->id,

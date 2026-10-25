@@ -8,6 +8,7 @@ use App\DataTransferObjects\LoginContext;
 use App\Events\LoginEvent;
 use App\Http\Resources\UserResource;
 use App\Support\RefreshTokenCookie;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -19,9 +20,7 @@ class AuthController extends Controller
     {
         $response = $this->login->handle($request->all());
 
-        logger("L", $response);
-
-        LoginEvent::dispatch($response['user'], LoginContext::fromRequest($request, $response['access_token']), $response['user']['user_store']['id']);
+        LoginEvent::dispatch($response['user'], LoginContext::fromRequest($request, $response['access_token']));
 
         return new UserResource($response['user'])->additional([
             'access_token' => $response['access_token'],
@@ -35,7 +34,7 @@ class AuthController extends Controller
     public function show(Request $request): UserResource
     {
         $user = $request->user();
-        return new UserResource($user->load(['user_stores.subscription.plan.features', 'user_stores.store', 'last_login', 'user_stores.roles']));
+        return new UserResource($user->load(['user_stores.subscription.plan.features'=>fn(HasMany $hasMany) => $hasMany->whereIsEnabled(true), 'user_stores.store', 'last_login', 'user_stores.roles']));
     }
 
     public function destroy(Request $request)

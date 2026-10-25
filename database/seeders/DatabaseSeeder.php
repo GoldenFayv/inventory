@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PermissionSeeder::class,
             SubscriptionPlanSeeder::class,
+            SuperAdminSeeder::class
         ]);
         // }
     }

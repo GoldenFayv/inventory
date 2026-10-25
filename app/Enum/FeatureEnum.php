@@ -7,9 +7,7 @@ enum FeatureEnum: string
     case INVENTORY = 'inventory';
     case SALES = 'sales';
     case STAFF_MANAGEMENT = 'staff_management';
-    case ANALYTICS = 'analytics';
-    case NOTIFICATION = "notification";
-
+    // case NOTIFICATION = "notification";
     case SALES_RETURNS = 'sales_returns';
 
 
