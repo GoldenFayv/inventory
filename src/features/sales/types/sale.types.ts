@@ -5,6 +5,7 @@ export type PaymentMethod = "cash" | "transfer";
 export interface SaleItemPayload {
     product_id: Id;
     quantity: number;
+    unit_price?: number;
 }
 
 export interface CreateSalePayload {

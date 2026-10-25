@@ -95,9 +95,10 @@ export default function CheckoutPage() {
     }
 
     const payload: CreateSalePayload = {
-      items: items.map(({ product, quantity }) => ({
+      items: items.map(({ product, quantity, unit_price }) => ({
         product_id: product.id,
         quantity,
+        unit_price,
       })),
       customer_name: details.customer_name.trim(),
       customer_phone: details.customer_phone.trim(),
@@ -394,13 +395,13 @@ export default function CheckoutPage() {
             </div>
           ) : (
             <div className="mt-4 divide-y divide-border">
-              {items.map(({ product, quantity }) => (
+              {items.map(({ product, quantity, unit_price }) => (
                 <div key={product.id} className="space-y-3 py-4 first:pt-0">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="font-medium text-text">{product.name}</p>
                       <p className="mt-1 text-xs text-text-muted">
-                        {formatCurrency(product.selling_price)} each
+                        Asking price: {formatCurrency(product.selling_price)}
                       </p>
                     </div>
                     <button
@@ -413,13 +414,37 @@ export default function CheckoutPage() {
                     </button>
                   </div>
 
+                  <label className="block space-y-1">
+                    <span className="text-xs text-text-muted">
+                      Negotiated unit price (₦)
+                    </span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={unit_price}
+                      onChange={(event) => {
+                        const amount = event.currentTarget.valueAsNumber ?? product.selling_price;
+                        updateQuantity(
+                          product.id,
+                          quantity,
+                          Number.isFinite(amount) ? amount : null,
+                        );
+                      }}
+                      aria-label={`Negotiated unit price for ${product.name}`}
+                      className="w-full rounded-input border border-border bg-background px-3 py-2 text-sm text-text outline-none focus:border-primary"
+                    />
+                  </label>
+
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
                         aria-label={`Decrease ${product.name} quantity`}
                         disabled={quantity <= 1}
-                        onClick={() => updateQuantity(product.id, quantity - 1)}
+                        onClick={() =>
+                          updateQuantity(product.id, quantity - 1, unit_price)
+                        }
                         className="rounded-input border border-border p-2 text-text disabled:opacity-40"
                       >
                         <Minus size={14} aria-hidden="true" />
@@ -431,14 +456,16 @@ export default function CheckoutPage() {
                         type="button"
                         aria-label={`Increase ${product.name} quantity`}
                         disabled={quantity >= product.quantity}
-                        onClick={() => updateQuantity(product.id, quantity + 1)}
+                        onClick={() =>
+                          updateQuantity(product.id, quantity + 1, unit_price)
+                        }
                         className="rounded-input border border-border p-2 text-text disabled:opacity-40"
                       >
                         <Plus size={14} aria-hidden="true" />
                       </button>
                     </div>
                     <p className="font-semibold text-text">
-                      {formatCurrency(product.selling_price * quantity)}
+                      {formatCurrency(unit_price * quantity)}
                     </p>
                   </div>
                 </div>

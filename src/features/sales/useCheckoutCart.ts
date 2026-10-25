@@ -4,6 +4,7 @@ import type IProduct from "../products/types/product.types";
 export interface ICartItem {
     product: IProduct;
     quantity: number;
+    unit_price: number;
 }
 
 export function useCheckoutCart() {
@@ -31,11 +32,15 @@ export function useCheckoutCart() {
                 );
             }
 
-            return [...currentItems, { product, quantity: 1 }];
+            return [...currentItems, {
+                product,
+                quantity: 1,
+                unit_price: product.selling_price,
+            }];
         });
     }
 
-    function updateQuantity(productId: Id, quantity: number) {
+    function updateQuantity(productId: Id, quantity: number, amount?: number | null) {
         setItems((currentItems) =>
             currentItems.map((item) =>
                 item.product.id === productId
@@ -45,6 +50,7 @@ export function useCheckoutCart() {
                             item.product.quantity,
                             Math.max(1, Math.floor(quantity) || 1),
                         ),
+                        unit_price: amount ?? item.product.selling_price,
                     }
                     : item,
             ),
@@ -62,7 +68,7 @@ export function useCheckoutCart() {
     }
 
     const totalAmount = items.reduce(
-        (total, item) => total + item.product.selling_price * item.quantity,
+        (total, item) => total + item.unit_price * item.quantity,
         0,
     );
 

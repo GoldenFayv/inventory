@@ -11,7 +11,7 @@ export const navigation = [
         label: "Home",
         to: "/",
         icon: LayoutDashboard,
-        permission: "dashboard.view",
+        permission: null,
     },
     {
         label: "Products",
@@ -29,7 +29,7 @@ export const navigation = [
         label: "Sales Return",
         to: "/sales/returns",
         icon: RotateCcw,
-        permission: "sales.view",
+        permission: "sales.return.view",
     },
     {
         label: "Settings",

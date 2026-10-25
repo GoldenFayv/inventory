@@ -1,15 +1,6 @@
-import { useState } from "react";
-import {
-  RefreshCw,
-  WifiOff,
-  ShoppingBag,
-  Wallet,
-  HandCoins,
-  PackageSearch,
-  Warehouse,
-} from "lucide-react";
+import { useState, type ComponentProps, type ReactNode } from "react";
+import { RefreshCw } from "lucide-react";
 
-import SummaryCard from "./components/SummaryCard";
 import QuickActions from "./components/QuickActions";
 import LowStockList from "./components/LowStockList";
 import { useDashboard } from "./useDashboard";
@@ -18,8 +9,14 @@ import { useLowStockProducts } from "../products/useProduct";
 import { useOutstandingCredit, useRecentSales } from "../sales/useSales";
 import RecentSales from "./components/RecentSales";
 import OutstandingCreditList from "./OutstandingCreditList";
+import DashboardCards from "./components/Cards";
+import { HasPermission } from "../../components/layout/HasPermission";
+import { PermissionEnum } from "../../utils/permissions";
+import SectionError from "./components/SectionError";
 
 type DateMode = "today" | "single" | "range";
+
+const MIN_DATE = "2000-01-01";
 
 function getLocalDate() {
   const now = new Date();
@@ -41,135 +38,178 @@ function formatDate(value: string) {
   }).format(new Date(`${value}T00:00:00Z`));
 }
 
-export default function DashboardPage() {
-  const [dateMode, ] = useState<DateMode>("range");
-  const [selectedDate, setSelectedDate] = useState(getLocalDate);
-  const [from, setFrom] = useState(getLocalDate);
-  const [to, setTo] = useState("");
+/**
+ * A complete YYYY-MM-DD date between MIN_DATE and today.
+ * ISO date strings compare correctly as plain text.
+ */
+function isUsableDate(value: string, today: string) {
+  return (
+    /^\d{4}-\d{2}-\d{2}$/.test(value) && value >= MIN_DATE && value <= today
+  );
+}
 
-  const filters =
-    dateMode === "single"
-      ? { date: selectedDate }
-      : dateMode === "range"
-        ? { from, to }
-        : {};
+/**
+ * Turns the raw input values into a period that is always valid:
+ * - an empty or half-typed "from" falls back to today
+ * - an empty "to" means "through today"
+ * - "to" can never be earlier than "from"
+ * The mode is derived, so the labels, the API filters and the cards
+ * can never disagree with what the inputs show.
+ */
+function resolvePeriod(from: string, to: string, today: string) {
+  const start = isUsableDate(from, today) ? from : today;
+  const requestedEnd = isUsableDate(to, today) ? to : today;
+  const end = requestedEnd < start ? start : requestedEnd;
 
-  const { data, isPending, isError, isFetching, refetch } =
-    useDashboard(filters);
+  const mode: DateMode =
+    start === end ? (start === today ? "today" : "single") : "range";
 
-  const lowStockQuery = useLowStockProducts();
-  const recentSalesQuery = useRecentSales();
-  const outstandingCreditQuery = useOutstandingCredit();
+  return { start, end, mode };
+}
 
-  const periodLabel =
-    dateMode === "today"
-      ? "today"
-      : dateMode === "single"
-        ? `on ${formatDate(selectedDate)}`
-        : `from ${formatDate(from)} to ${formatDate(to)}`;
+function SectionSkeleton() {
+  return (
+    <div
+      aria-hidden="true"
+      className="h-32 animate-pulse rounded-card border border-border bg-surface"
+    />
+  );
+}
 
-  const headingDate =
-    dateMode === "today"
-      ? new Intl.DateTimeFormat("en-NG", {
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        }).format(new Date())
-      : dateMode === "single"
-        ? formatDate(selectedDate)
-        : `${formatDate(from)} – ${formatDate(to)}`;
+/*
+ * Each section below owns its query. It only runs when the section is
+ * mounted (i.e. the user passed <HasPermission>), and if it fails, only
+ * that section shows an error. Nothing else on the page is affected.
+ */
 
-  const cards = data
-    ? ([
-        {
-          label: dateMode === "today" ? "Sales today" : "Sales",
-          amount: data.summary.sales,
-          description: `Total value of sales ${periodLabel}`,
-          color: "primary",
-          isCurrency: true,
-          icon: ShoppingBag,
-        },
-        {
-          label: "Money received",
-          amount: data.summary.money_received,
-          description: `Payments received ${periodLabel}`,
-          color: "success",
-          isCurrency: true,
-          icon: Wallet,
-        },
-        {
-          label: "Customers owe",
-          amount: data.summary.outstanding_credit,
-          description: "Outstanding credit balance",
-          color: "warning",
-          isCurrency: true,
-          icon: HandCoins,
-        },
-        {
-          label: "Low stock items",
-          amount: data.summary.low_stock_count,
-          description: "Products to restock",
-          color: "danger",
-          isCurrency: false,
-          icon: PackageSearch,
-        },
-        {
-          label: "Stock value",
-          amount: data.summary.stock_value,
-          description: "Estimated inventory cost",
-          color: "success",
-          isCurrency: true,
-          icon: Warehouse,
-        },
-      ] as const)
-    : [];
+function LowStockSection() {
+  const query = useLowStockProducts();
 
-  if (isPending) {
+  return (
+    <LowStockList
+      products={query.data ?? []}
+      isLoading={query.isPending}
+      isError={query.isError}
+      onRetry={() => void query.refetch()}
+    />
+  );
+}
+
+function RecentSalesSection() {
+  const query = useRecentSales();
+
+  if (query.isPending) return <SectionSkeleton />;
+
+  if (query.isError) {
     return (
-      <div className="space-y-6" aria-busy="true">
-        <div className="space-y-2">
-          <div className="h-4 w-40 animate-pulse rounded bg-border" />
-          <div className="h-8 w-56 animate-pulse rounded bg-border" />
-        </div>
-
-        <div className="grid grid-cols-1 gap-3 min-[380px]:grid-cols-2 xl:grid-cols-4">
-          {[1, 2, 3, 4].map((item) => (
-            <div
-              key={item}
-              className="h-36 animate-pulse rounded-card border border-border bg-surface"
-            />
-          ))}
-        </div>
-
-        <p className="text-sm text-text-muted">Loading your shop summary...</p>
-      </div>
+      <SectionError
+        title="Recent sales"
+        error={query.error}
+        onRetry={() => void query.refetch()}
+      />
     );
   }
 
-  if (isError || !data) {
+  return <RecentSales sales={query.data ?? []} />;
+}
+
+function OutstandingCreditSection({
+  totalOutstanding,
+}: {
+  totalOutstanding: ComponentProps<
+    typeof OutstandingCreditList
+  >["totalOutstanding"];
+}) {
+  const query = useOutstandingCredit();
+
+  if (query.isPending) return <SectionSkeleton />;
+
+  if (query.isError) {
     return (
-      <section className="rounded-card border border-border bg-surface p-5 sm:p-8">
-        <WifiOff size={28} className="text-text-muted" />
+      <SectionError
+        title="Outstanding credit"
+        error={query.error}
+        onRetry={() => void query.refetch()}
+      />
+    );
+  }
 
-        <h1 className="mt-4 text-xl font-bold">
-          Couldn't load your shop summary
-        </h1>
+  return (
+    <OutstandingCreditList
+      invoices={query.data ?? []}
+      totalOutstanding={totalOutstanding}
+    />
+  );
+}
 
-        <p className="mt-2 text-sm leading-6 text-text-muted">
-          Check your internet connection and try again. Your figures haven't
-          been replaced with sample data.
-        </p>
+export default function DashboardPage() {
+  const [from, setFrom] = useState(getLocalDate);
+  const [to, setTo] = useState("");
 
-        <button
-          type="button"
-          onClick={() => void refetch()}
-          className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-input bg-primary px-5 py-3 font-semibold text-white hover:bg-primary-hover"
-        >
-          <RefreshCw size={18} />
-          Try again
-        </button>
-      </section>
+  const today = getLocalDate();
+  const { start, end, mode: dateMode } = resolvePeriod(from, to, today);
+
+  // The "to" field only matters once "from" is earlier than today
+  const showTo = from !== "" && from < today;
+
+  // 1. Filters sent to the API
+  const filters =
+    dateMode === "range"
+      ? { from: start, to: end }
+      : dateMode === "single"
+        ? { date: start }
+        : {};
+
+  const summaryQuery = useDashboard(filters);
+  const summary = summaryQuery.data?.summary;
+
+  // 2. Period label
+  const periodLabels: Record<DateMode, string> = {
+    today: "today",
+    single: `on ${formatDate(start)}`,
+    range: `from ${formatDate(start)} to ${formatDate(end)}`,
+  };
+  const periodLabel = periodLabels[dateMode];
+
+  // 3. Heading date
+  const todayFormatted = new Intl.DateTimeFormat("en-NG", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date());
+
+  const headingDates: Record<DateMode, string> = {
+    today: todayFormatted,
+    single: formatDate(start),
+    range: `${formatDate(start)} – ${formatDate(end)}`,
+  };
+  const headingDate = headingDates[dateMode];
+
+  function handleFromChange(value: string) {
+    setFrom(value);
+
+    // Cleared, today, or later than the current "to": reset "to" so the
+    // period collapses to "from through today" instead of going invalid.
+    if (!value || value >= today || (to && value > to)) {
+      setTo("");
+    }
+  }
+
+  /** Sections that need the summary request: loading, error or content. */
+  function withSummary(
+    title: string,
+    render: (summary: NonNullable<typeof summary>) => ReactNode,
+  ) {
+    if (summary) return render(summary);
+    if (summaryQuery.isPending) return <SectionSkeleton />;
+
+    return (
+      <SectionError
+        title={title}
+        error={summaryQuery.error}
+        onRetry={() => void summaryQuery.refetch()}
+      />
     );
   }
 
@@ -191,11 +231,14 @@ export default function DashboardPage() {
         <button
           type="button"
           aria-label="Refresh shop summary"
-          onClick={() => void refetch()}
-          disabled={isFetching}
+          onClick={() => void summaryQuery.refetch()}
+          disabled={summaryQuery.isFetching}
           className="flex size-11 shrink-0 items-center justify-center rounded-input border border-border bg-surface text-text-muted hover:bg-background disabled:opacity-50"
         >
-          <RefreshCw size={19} className={isFetching ? "animate-spin" : ""} />
+          <RefreshCw
+            size={19}
+            className={summaryQuery.isFetching ? "animate-spin" : ""}
+          />
         </button>
       </header>
 
@@ -210,94 +253,29 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          {/* <button
-            type="button"
-            onClick={() => setDateMode("today")}
-            aria-pressed={dateMode === "today"}
-            className={`min-h-10 rounded-input border px-4 py-2 text-sm font-medium ${
-              dateMode === "today"
-                ? "border-primary bg-primary text-white"
-                : "border-border bg-background text-text hover:bg-surface"
-            }`}
-          >
-            Today
-          </button> */}
-
-          {/* <button
-            type="button"
-            onClick={() => setDateMode("single")}
-            aria-pressed={dateMode === "single"}
-            className={`min-h-10 rounded-input border px-4 py-2 text-sm font-medium ${
-              dateMode === "single"
-                ? "border-primary bg-primary text-white"
-                : "border-border bg-background text-text hover:bg-surface"
-            }`}
-          >
-            Single date
-          </button> */}
-
-          {/* <button
-            type="button"
-            onClick={() => setDateMode("range")}
-            aria-pressed={dateMode === "range"}
-            className={`min-h-10 rounded-input border px-4 py-2 text-sm font-medium ${
-              dateMode === "range"
-                ? "border-primary bg-primary text-white"
-                : "border-border bg-background text-text hover:bg-surface"
-            }`}
-          >
-            Date range
-          </button> */}
-        </div>
-
-        {dateMode === "single" && (
-          <div className="max-w-sm space-y-2">
+        <div
+          className={`grid grid-cols-1 gap-3 ${showTo ? "sm:grid-cols-2" : ""}`}
+        >
+          <div className="space-y-2">
             <label
-              htmlFor="dashboard-date"
+              htmlFor="dashboard-from"
               className="block text-sm font-medium"
             >
-              Select date
+              From
             </label>
 
             <input
-              id="dashboard-date"
+              id="dashboard-from"
               type="date"
-              value={selectedDate}
-              max={getLocalDate()}
-              onChange={(event) => setSelectedDate(event.target.value)}
+              value={from}
+              min={MIN_DATE}
+              max={today}
+              onChange={(event) => handleFromChange(event.target.value)}
               className="min-h-12 w-full rounded-input border border-border bg-background px-3 text-text focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
-        )}
 
-        {dateMode === "range" && (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div className="space-y-2">
-              <label
-                htmlFor="dashboard-from"
-                className="block text-sm font-medium"
-              >
-                From
-              </label>
-
-              <input
-                id="dashboard-from"
-                type="date"
-                value={from}
-                max={to || getLocalDate()}
-                onChange={(event) => {
-                  const value = event.target.value;
-                  setFrom(value);
-
-                  if (value && to && value > to) {
-                    setTo(value);
-                  }
-                }}
-                className="min-h-12 w-full rounded-input border border-border bg-background px-3 text-text focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-            </div>
-
+          {showTo && (
             <div className="space-y-2">
               <label
                 htmlFor="dashboard-to"
@@ -311,15 +289,20 @@ export default function DashboardPage() {
                 type="date"
                 value={to}
                 min={from}
-                max={getLocalDate()}
+                max={today}
+                aria-describedby="dashboard-to-hint"
                 onChange={(event) => setTo(event.target.value)}
                 className="min-h-12 w-full rounded-input border border-border bg-background px-3 text-text focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
-            </div>
-          </div>
-        )}
 
-        {isFetching && (
+              <p id="dashboard-to-hint" className="text-xs text-text-muted">
+                Leave empty to include today.
+              </p>
+            </div>
+          )}
+        </div>
+
+        {summaryQuery.isFetching && (
           <p role="status" className="text-sm text-text-muted">
             Updating summary...
           </p>
@@ -327,31 +310,59 @@ export default function DashboardPage() {
       </section>
 
       <section aria-label="Shop summary">
-        <div className="grid grid-cols-1 gap-3 min-[380px]:grid-cols-2 sm:gap-4 xl:grid-cols-3">
-          {cards.map((card) => (
-            <SummaryCard key={card.label} {...card} />
-          ))}
-        </div>
+        {summaryQuery.isPending ? (
+          <div
+            aria-busy="true"
+            className="grid grid-cols-1 gap-3 min-[380px]:grid-cols-2 xl:grid-cols-4"
+          >
+            {[1, 2, 3, 4].map((item) => (
+              <div
+                key={item}
+                className="h-36 animate-pulse rounded-card border border-border bg-surface"
+              />
+            ))}
+          </div>
+        ) : summaryQuery.data ? (
+          <DashboardCards
+            data={summaryQuery.data}
+            periodLabel={periodLabel}
+            dateMode={dateMode}
+          />
+        ) : (
+          <SectionError
+            title="Couldn't load your shop summary"
+            error={summaryQuery.error}
+            onRetry={() => void summaryQuery.refetch()}
+          />
+        )}
       </section>
 
       <QuickActions />
 
-      <InventoryHealth
-        totalProducts={data.summary.total_products}
-        lowStockCount={data.summary.low_stock_count}
-        outOfStockCount={data.summary.out_of_stock_count}
-      />
+      <HasPermission to={PermissionEnum.PRODUCTS_VIEW}>
+        {withSummary("Inventory summary", (s) => (
+          <InventoryHealth
+            totalProducts={s.total_products}
+            lowStockCount={s.low_stock_count}
+            outOfStockCount={s.out_of_stock_count}
+          />
+        ))}
+      </HasPermission>
 
-      <LowStockList
-        products={lowStockQuery.data ?? []}
-        isLoading={lowStockQuery.isPending}
-        isError={lowStockQuery.isError}
-        onRetry={() => void lowStockQuery.refetch()}
-      />
+      <HasPermission to={PermissionEnum.PRODUCTS_VIEW}>
+        <LowStockSection />
+      </HasPermission>
 
-      <RecentSales sales={recentSalesQuery.data ?? []} />
+      {/* NOTE: was PRODUCTS_VIEW. Swap in your real sales/credit permission. */}
+      <HasPermission to={PermissionEnum.SALES_VIEW}>
+        <RecentSalesSection />
+      </HasPermission>
 
-      <OutstandingCreditList invoices={outstandingCreditQuery.data ?? []} totalOutstanding={data.summary.outstanding_credit} />
+      <HasPermission to={PermissionEnum.SALES_VIEW}>
+        {withSummary("Outstanding credit", (s) => (
+          <OutstandingCreditSection totalOutstanding={s.outstanding_credit} />
+        ))}
+      </HasPermission>
     </div>
   );
 }

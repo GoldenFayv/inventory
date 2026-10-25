@@ -73,12 +73,12 @@ textarea:focus-visible {
     visibility: hidden;
   }
 
-  #sale-receipt,
-  #sale-receipt * {
+  [data-print-root],
+  [data-print-root] * {
     visibility: visible;
   }
 
-  #sale-receipt {
+  [data-print-root] {
     position: absolute;
     inset: 0 auto auto 0;
     width: 100%;
