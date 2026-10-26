@@ -8,7 +8,7 @@ use App\Http\Controllers\StaffController;
 use App\Http\Controllers\ToggleUserStatusController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('permissions', PermissionController::class);
+Route::get('permissions', PermissionController::class)->middleware(PermissionEnum::ASSIGN_PERMISSION->middleware());
 Route::prefix('roles')->group(function () {
     Route::get('', [RoleController::class, 'index'])->middleware(PermissionEnum::ROLE_VIEW->middleware());
     Route::post('', [RoleController::class, 'store'])->middleware(PermissionEnum::ROLE_CREATE->middleware());

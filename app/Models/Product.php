@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-#[Fillable('parent_id', 'store_id', 'name', 'sku', 'selling_price', 'cost_price', 'quantity', 'is_active')]
+#[Fillable('parent_id', 'store_id', 'name', 'sku', 'selling_price', 'cost_price', 'quantity', 'is_active', 'low_stock_threshold')]
 class Product extends Model implements HasMedia
 {
     use HasUuids, BelongsToStore, Searchable, InteractsWithMedia, FileUpload;

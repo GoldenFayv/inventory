@@ -33,7 +33,7 @@ class UpsertRole
 
         return DB::transaction(function () use ($validated, $role, $store) {
             $role = Role::updateOrCreate(
-                ['id' => $role?->id],
+                ['id' => $role?->id, 'store_id' => $store->id],
                 ['name' => $validated['name']]
             );
 

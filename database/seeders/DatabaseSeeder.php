@@ -18,9 +18,9 @@ class DatabaseSeeder extends Seeder
 
         // if (!app()->environment('testing')) {
         $this->call([
+            SuperAdminSeeder::class,
             PermissionSeeder::class,
             SubscriptionPlanSeeder::class,
-            SuperAdminSeeder::class
         ]);
         // }
     }

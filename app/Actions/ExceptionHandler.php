@@ -8,6 +8,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
@@ -22,7 +23,18 @@ class ExceptionHandler
 
         // $exceptions->render(fn(ModelNotFoundException|NotFoundHttpException $e, Request $request): JsonResponse|null => self::json($request, 'Resource not found', 404));
 
-        // $exceptions->render(fn(ValidationException $e, Request $request): JsonResponse|null => self::json($request, 'Validation failed', 422, ['errors' => $e->errors()]));
+        // $exceptions->render(function (ValidationException $e, Request $request) {
+        //     foreach ($request->file('images', []) as $i => $file) {
+        //         logger()->debug('upload check', [
+        //             'index'   => $i,
+        //             'valid'   => $file->isValid(),
+        //             'error'   => $file->getError(),
+        //             'message' => $file->getErrorMessage(),
+        //             'size'    => $file->getSize(),
+        //         ]);
+        //     }
+        //     return self::json($request, 'Validation failed', 422, ['errors' => $e->errors()]);
+        // });
 
         $exceptions->render(fn(PermissionDoesNotExist $e, Request $request): JsonResponse|null => self::json($request, 'Permission does not exist!', 422));
 

@@ -12,6 +12,7 @@
         "laravel/passport": "^13.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",
+        "resend/resend-laravel": "*",
         "spatie/laravel-medialibrary": "*",
         "spatie/laravel-permission": "*"
     },

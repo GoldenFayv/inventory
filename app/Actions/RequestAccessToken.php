@@ -31,7 +31,9 @@ class RequestAccessToken
         }
 
         if (!$response->isSuccessful()) {
-            throw new \RuntimeException('Token request failed: ' . ($data['message'] ?? $response->getStatusCode()));
+            throw ValidationException::withMessages([
+                "reFrEsHtOkEn" => "Login to continue."
+            ]);            // throw new \RuntimeException('Token request failed: ' . ($data['message'] ?? $response->getStatusCode()));
         }
 
         $token_id = $this->tokenId($data['access_token']);

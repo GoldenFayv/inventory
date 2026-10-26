@@ -1,6 +1,7 @@
 <?php
 
 use App\Enum\FeatureEnum;
+use App\Enum\PermissionEnum;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\StoreController;
@@ -20,14 +21,13 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::middleware('auth:user')->group(function () {
+        Route::prefix("stores")->group(function () {
+            Route::post("", [StoreController::class, "store"]);
+            Route::patch("", [StoreController::class, "update"])->middleware(PermissionEnum::STORE_UPDATE->middleware());
+        });
         Route::get("dashboard/summary", DashboardController::class);
         Route::prefix('settings')->group(function () {
             require_once base_path("routes/settings.api.php");
-        });
-
-        Route::prefix("stores")->group(function () {
-            Route::post("", [StoreController::class, "store"]);
-            Route::patch("", [StoreController::class, "update"]);
         });
 
         Route::get("states", function (): AnonymousResourceCollection {

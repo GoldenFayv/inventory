@@ -48,7 +48,7 @@ class DashboardService
 
         $totalProducts = (clone $products)->count();
 
-        $lowStockCount = $products->clone()
+        $lowStockCount = (clone $products)
             ->where('quantity', '>', 0)
             ->whereColumn('quantity', '<=', 'low_stock_threshold')
             ->count();

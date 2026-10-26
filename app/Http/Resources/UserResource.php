@@ -24,7 +24,7 @@ class UserResource extends JsonResource
             'last_name' => $this->last_name,
             'email' => $this->email,
             'phone' => $this->phone,
-            'email_verified' => $this->email_verified,
+            'email_verified' => (bool)$this->email_verified_at,
             'phone_verified' => $this->phone_verified,
 
             'last_login' => $this->when(

@@ -25,6 +25,6 @@ class SendSaleRecordedNotifications implements ShouldQueue
             return;
         }
         $notificationEvent = NotificationEventEnum::SALE_RECORDED;
-        $this->notificationService->notifyStoreMembers($store, PermissionEnum::NOTIFICATIONS_SALES_RECEIVE, $notificationEvent, $notificationEvent->title(), $notificationEvent->description(), '/sales',);
+        // $this->notificationService->notifyStoreMembers($store, PermissionEnum::NOTIFICATIONS_SALES_RECEIVE, $notificationEvent, $notificationEvent->title(), $notificationEvent->description(), '/sales',);
     }
 }

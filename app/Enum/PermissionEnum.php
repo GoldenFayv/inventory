@@ -18,7 +18,8 @@ enum PermissionEnum: string
     case ROLE_CREATE = 'role.create';
     case ROLE_VIEW = 'role.view';
 
-    // case DASHBOARD_VIEW = 'dashboard.view';
+    case ASSIGN_PERMISSION = 'permission.assign';
+        // case DASHBOARD_VIEW = 'dashboard.view';
 
     case STAFF_CREATE = 'staff.create';
     case STAFF_UPDATE = 'staff.update';
@@ -26,9 +27,9 @@ enum PermissionEnum: string
 
     case STORE_UPDATE = 'store.update';
 
-    case NOTIFICATIONS_SALES_RECEIVE = 'notifications.sales.receive';
-    case NOTIFICATIONS_LOW_STOCK_RECEIVE = 'notifications.low_stock.receive';
-    case NOTIFICATIONS_SUBSCRIPTION_RECEIVE = 'notifications.subscription.receive';
+    // case NOTIFICATIONS_SALES_RECEIVE = 'notifications.sales.receive';
+    // case NOTIFICATIONS_LOW_STOCK_RECEIVE = 'notifications.low_stock.receive';
+    // case NOTIFICATIONS_SUBSCRIPTION_RECEIVE = 'notifications.subscription.receive';
 
     public function middleware(): string
     {
@@ -49,21 +50,20 @@ enum PermissionEnum: string
             self::SALES_RETURNS_VIEW,
             self::SALES_RETURNS_APPROVE => PermissionCategoryEnum::SALES_MANAGEMENT,
 
-            self::ROLE_VIEW,
-            self::ROLE_CREATE => PermissionCategoryEnum::ROLE_MANAGEMENT,
 
+            self::ROLE_VIEW,
+            self::ROLE_CREATE,
+            self::ASSIGN_PERMISSION,
             self::STAFF_VIEW,
             self::STAFF_CREATE,
             self::STAFF_UPDATE => PermissionCategoryEnum::STAFF_MANAGEMENT,
 
             self::STORE_UPDATE => PermissionCategoryEnum::STORE_MANAGEMENT,
 
-
-
-            self::NOTIFICATIONS_SALES_RECEIVE,
-            self::NOTIFICATIONS_LOW_STOCK_RECEIVE,
-            self::NOTIFICATIONS_SUBSCRIPTION_RECEIVE
-            => PermissionCategoryEnum::NOTIFICATION_MANAGEMENT,
+            // self::NOTIFICATIONS_SALES_RECEIVE,
+            // self::NOTIFICATIONS_LOW_STOCK_RECEIVE,
+            // self::NOTIFICATIONS_SUBSCRIPTION_RECEIVE
+            // => PermissionCategoryEnum::NOTIFICATION_MANAGEMENT,
         };
     }
 
@@ -88,29 +88,31 @@ enum PermissionEnum: string
     public function description(): string
     {
         return match ($this) {
-            self::PRODUCTS_VIEW   => 'View store products',
-            self::PRODUCTS_CREATE => 'Create new products',
-            self::PRODUCTS_UPDATE => 'Update existing products',
+            self::PRODUCTS_VIEW   => 'View products',
+            self::PRODUCTS_CREATE => 'Create products',
+            self::PRODUCTS_UPDATE => 'Update products',
 
-            self::SALES_VIEW      => 'View sales records',
-            self::SALES_CREATE    => 'Record sales',
-            self::SALES_UPDATE    => 'Update sales records',
-            self::SALES_RETURNS_APPROVE => 'Approve or reject customer returns',
-            self::SALES_RETURNS_CREATE => 'Request Sales Return',
-            self::SALES_RETURNS_VIEW => 'View Sales Returns',
+            self::SALES_VIEW      => 'View sales',
+            self::SALES_CREATE    => 'Create sales',
+            self::SALES_UPDATE    => 'Update sales',
+            self::SALES_RETURNS_VIEW    => 'View returns',
+            self::SALES_RETURNS_CREATE  => 'Create returns',
+            self::SALES_RETURNS_APPROVE => 'Approve returns',
 
-            self::ROLE_VIEW       => 'View roles',
-            self::ROLE_CREATE     => 'Create new roles',
+            self::ROLE_VIEW     => 'View roles',
+            self::ROLE_CREATE   => 'Create roles',
 
-            self::STAFF_VIEW      => 'View staff/workers',
-            self::STAFF_CREATE    => 'Create new staff/worker',
-            self::STAFF_UPDATE    => 'Update staff/worker details and roles',
+            self::ASSIGN_PERMISSION => 'Assign permissions',
 
-            self::STORE_UPDATE => 'Update store profile',
+            self::STAFF_VIEW    => 'View staff',
+            self::STAFF_CREATE  => 'Create staff',
+            self::STAFF_UPDATE  => 'Update staff',
 
-            self::NOTIFICATIONS_SALES_RECEIVE => 'Receive sale notifications',
-            self::NOTIFICATIONS_LOW_STOCK_RECEIVE => 'Receive low-stock notifications',
-            self::NOTIFICATIONS_SUBSCRIPTION_RECEIVE => 'Receive subscription notifications',
+            self::STORE_UPDATE  => 'Update store settings',
+
+            // self::NOTIFICATIONS_SALES_RECEIVE         => 'Receive sales alerts',
+            // self::NOTIFICATIONS_LOW_STOCK_RECEIVE    => 'Receive low-stock alerts',
+            // self::NOTIFICATIONS_SUBSCRIPTION_RECEIVE => 'Receive subscription alerts',
         };
     }
 
@@ -131,7 +133,6 @@ enum PermissionEnum: string
             self::STAFF_CREATE,
             self::STAFF_UPDATE => FeatureEnum::STAFF_MANAGEMENT,
 
-            default => FeatureEnum::INVENTORY,
 
             // self::NOTIFICATIONS_SALES_RECEIVE,
             // self::NOTIFICATIONS_LOW_STOCK_RECEIVE,
@@ -140,6 +141,8 @@ enum PermissionEnum: string
             self::SALES_RETURNS_CREATE,
             self::SALES_RETURNS_VIEW,
             self::SALES_RETURNS_APPROVE => FeatureEnum::SALES_RETURNS,
+
+            default => FeatureEnum::INVENTORY,
         };
     }
 

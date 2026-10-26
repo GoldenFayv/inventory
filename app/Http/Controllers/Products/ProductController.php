@@ -25,6 +25,13 @@ class ProductController extends Controller
 
     public function store(Request $request): ProductResource
     {
+        logger()->debug('limits', [
+            'sapi'   => php_sapi_name(),
+            'ini'    => php_ini_loaded_file(),
+            'upload' => ini_get('upload_max_filesize'),
+            'post'   => ini_get('post_max_size'),
+            'php'    => PHP_VERSION,
+        ]);
         $user = $request->user();
 
         $product = $this->productService->create($user, $request->all());

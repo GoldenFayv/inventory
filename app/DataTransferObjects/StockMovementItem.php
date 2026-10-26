@@ -13,10 +13,11 @@ final readonly class StockMovementItem
      */
     public static function fromArray(array $data): self
     {
+        $unit_price = $data['unit_price'] ?? null;
         return new self(
             productId: $data['product_id'],
             quantity: (int) ($data['quantity'] ?? 0),
-            unit_price: ((int) $data['unit_price'] ?? null)
+            unit_price: $unit_price !== null ? (int) $unit_price : null
         );
     }
 

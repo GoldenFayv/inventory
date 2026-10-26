@@ -11,6 +11,7 @@ use App\Traits\HasLoginHistory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -24,7 +25,7 @@ use Laravel\Passport\HasApiTokens;
 
 #[Fillable(['first_name', 'last_name', 'email', 'phone', 'phone_verified_at', 'password', 'active_store_id', 'is_super_user'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable implements FilamentUser, HasName
+class User extends Authenticatable implements FilamentUser, HasName, MustVerifyEmail
 {
     use HasFactory, Notifiable, HasUuids, HasLoginHistory, HasApiTokens, BelongsToLga;
 

@@ -24,9 +24,10 @@ class CreateProduct
             "name" => ["required", Rule::unique("products", "name")->where("store_id", $user->active_store_id)],
             "selling_price" => ["required", "numeric", "min:0"],
             "cost_price" => ["required", "numeric", "min:0"],
-            "opening_quantity" => ["sometimes", "integer", "min:0"],
+            "opening_quantity" => ["sometimes", "integer", "min:1"],
             "images" => ["sometimes", "array", "max:3"],
-            "images.*" => ["file", "image", "mimes:jpg,jpeg,png,webp", "max:5120"],
+            "images.*" => ["file", "image", "mimes:jpg,jpeg,png,webp", "max:2048"],
+            "low_stock_threshold" => ["required", "min:1", "integer"]
         ], [
             "sku.unique" => "A product with this SKU already exists in your store.",
             "name.required" => "Enter a product name.",
@@ -46,8 +47,10 @@ class CreateProduct
             // optional: friendlier names for the default messages
             "selling_price" => "selling price",
             "cost_price" => "cost price",
+            'images.*.uploaded' => 'Each image must be smaller than 2048KB.',
+            'images.*.max'      => 'Each image must be 2048KB or less.',
         ]);
-
+        logger("Data", $data);
         $validated = $validator->validate();
         $validated['opening_quantity'] = 0;
         $validated['sku'] ??= generateSku();

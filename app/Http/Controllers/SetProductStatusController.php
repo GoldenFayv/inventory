@@ -12,12 +12,9 @@ class SetProductStatusController extends Controller
     {
         $user = $request->user();
 
-        dispatch(function () use ($user, $updateProduct, $productId) {
+        $product = Product::where('store_id', $user->active_store_id)->findOrFail($productId);
 
-            $product = Product::where('store_id', $user->active_store_id)->findOrFail($productId);
-
-            $updateProduct->handle($user, $product, ["is_active" => !$product->is_active]);
-        });
+        $updateProduct->handle($user, $product, ["is_active" => !$product->is_active]);
 
         return response()->json();
     }

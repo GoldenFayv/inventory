@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\PasswordResetController;
@@ -11,6 +12,10 @@ Route::post("register", RegistrationController::class);
 Route::post("refresh", [AuthController::class, "update"]);
 Route::post("login", [AuthController::class, "store"]);
 Route::delete("logout", [AuthController::class, "destroy"])->middleware('auth:user');
+
+Route::get('email/verification/{id}/{hash}', [EmailVerificationController::class, 'verify'])->middleware('throttle:10,1')->name('verification.verify');
+Route::post('email/verification', [EmailVerificationController::class, 'send'])->middleware(['throttle:3,1', 'auth:user']);
+
 
 Route::prefix("profile")->middleware('auth:user')->group(function () {
     Route::get("", [AuthController::class, "show"]);
