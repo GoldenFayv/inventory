@@ -20,6 +20,8 @@ Route::prefix('v1')->group(function () {
         require_once base_path("routes/auth.api.php");
     });
 
+    Route::get("plans", PlanController::class);
+
     Route::middleware('auth:user')->group(function () {
         Route::prefix("stores")->group(function () {
             Route::post("", [StoreController::class, "store"]);
@@ -37,7 +39,7 @@ Route::prefix('v1')->group(function () {
 
         Route::prefix("plans")->group(function () {
             Route::post("{plan_plan_id}/subscribe", [SubscriptionController::class, "store"]);
-            Route::get("", PlanController::class);
+            // Route::get("", PlanController::class);
         });
 
         Route::post("subscriptions/trial", ActivateFreeTrialController::class);
