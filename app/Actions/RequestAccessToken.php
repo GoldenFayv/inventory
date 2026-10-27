@@ -31,6 +31,14 @@ class RequestAccessToken
         }
 
         if (!$response->isSuccessful()) {
+            logger()->error('Passport token request failed', [
+                'status' => $response->getStatusCode(),
+                'response' => $data,
+                'grant_type' => $validated['grant_type'] ?? null,
+                'client_id_configured' => filled(config('passport.client_id')),
+                'client_secret_configured' => filled(config('passport.client_secret')),
+            ]);
+
             throw ValidationException::withMessages([
                 "reFrEsHtOkEn" => "Login to continue."
             ]);            // throw new \RuntimeException('Token request failed: ' . ($data['message'] ?? $response->getStatusCode()));
