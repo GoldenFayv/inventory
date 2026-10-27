@@ -11,7 +11,7 @@ Content-Type: application/json
     "password": "1234567890Pp@",
     "first_name": "Favour",
     "last_name": "Golden",
-    "phone": "090344030851"
+    "phone": null
 }
 
 ### Login

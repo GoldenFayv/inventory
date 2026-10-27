@@ -15,7 +15,7 @@ class CreateUser
             "first_name" => ['required', 'string'],
             "last_name" => ['required', 'string'],
             "email" => ['required', 'email', Rule::unique("users", "email")],
-            "phone" => ['sometimes', Rule::unique("users", "phone")],
+            "phone" => ['sometimes', Rule::unique("users", "phone")->whereNotNull('phone')],
             "password" => ['required', Password::min(8)->mixedCase()->numbers()->symbols()]
         ])->validate();
 

@@ -15,7 +15,7 @@ class UpdateUser
             "first_name" => ['sometimes', 'string'],
             "last_name" => ['sometimes', 'string'],
             "email" => ['sometimes', 'email', Rule::unique("users", "email")->ignore($user->getKey())],
-            "phone" => ['sometimes', Rule::unique("users", "phone")->ignore($user->getKey())],
+            "phone" => ['sometimes', Rule::unique("users", "phone")->whereNotNull('phone')->ignore($user->getKey())],
             "password" => ['sometimes', Password::min(8)->mixedCase()->numbers()->symbols()],
         ])->validate();
 
