@@ -15,8 +15,8 @@ export default interface IProduct {
 
 export interface CreateProductPayload {
     name: string;
-    sku?: string;
-    opening_quantity: number;
+    sku?: string | null;
+    opening_quantity?: number;
     selling_price: number;
     cost_price: number;
     low_stock_threshold: number;
@@ -27,14 +27,14 @@ export interface UpdateProductPayload extends Partial<CreateProductPayload> {
     remove_media_ids?: string[];
 }
 
-export interface ProductFormPayload {
-    name: string;
-    sku: string | null;
-    selling_price: number;
-    cost_price: number;
-    low_stock_threshold: number;
-    opening_quantity?: number;
-    images: File[];
+export interface ProductFormPayload extends CreateProductPayload{
+    // name: string;
+    // sku: string | null;
+    // selling_price: number;
+    // cost_price: number;
+    // low_stock_threshold: number;
+    // opening_quantity?: number;
+    // images: File[];
     remove_media_ids: Id[];
 }
 

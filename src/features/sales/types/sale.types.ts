@@ -66,7 +66,7 @@ export interface IInvoiceProduct {
     is_active: boolean;
 }
 export interface IInvoiceStore {
-    id: string;
+    id: Id;
     name: string;
     address: string | null;
     phone?: string | null;

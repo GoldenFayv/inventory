@@ -17,7 +17,10 @@ export function useToogleStatus() {
 
     return useMutation({
         mutationFn: (productId: Id) => productService.toggleStatus(productId),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["products"] }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["products"] });
+            // queryClient.invalidateQueries({ queryKey: ["dashboard", "summary"] });
+        },
     });
 }
 

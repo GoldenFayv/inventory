@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { ImagePlus, X } from "lucide-react";
 import type { ProductFormPayload } from "../types/product.types";
 import type IProduct from "../types/product.types";
+import { useProductImages } from "../useProductImages";
 
 interface ProductFormProps {
   onSubmit: (payload: ProductFormPayload) => Promise<void>;
@@ -25,30 +26,43 @@ export default function ProductForm({
     initialProduct ? String(initialProduct.cost_price) : "",
   );
   const [openingQuantity, setOpeningQuantity] = useState(
-    initialProduct?.quantity ?? "",
+    String(initialProduct?.quantity ?? ""),
   );
   const [lowStockThreshold, setLowStockThreshold] = useState(
     String(initialProduct?.low_stock_threshold ?? 5),
   );
-  const [images, setImages] = useState<File[]>([]);
   const [existingMedia, setExistingMedia] = useState(
     initialProduct?.media ?? [],
   );
   const [removeMediaIds, setRemoveMediaIds] = useState<Id[]>([]);
   const [error, setError] = useState("");
 
-  const imagePreviews = useMemo(
-    () => images.map((image) => URL.createObjectURL(image)),
-    [images],
-  );
+  // Owns selection, validation, compression, previews and URL cleanup.
+  // Previews are released automatically when the form unmounts.
+  const {
+    images,
+    imagePreviews,
+    handleImageSelection,
+    removeImage,
+    imageError,
+    isProcessing,
+  } = useProductImages({ maxImages: 3, existingCount: existingMedia.length });
 
-  useEffect(() => {
-    return () => imagePreviews.forEach((url) => URL.revokeObjectURL(url));
-  }, [imagePreviews]);
+  // Laravel reports file failures as images.0, images.1, ... so collect them all
+  const serverImageErrors = [
+    ...new Set(
+      Object.entries(serverErrors)
+        .filter(([key]) => key === "images" || key.startsWith("images."))
+        .flatMap(([, messages]) => messages),
+    ),
+  ];
 
   async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+
+    // Images still being compressed would be missing from the payload
+    if (isProcessing) return;
 
     const selling = Number(sellingPrice);
     const cost = Number(costPrice);
@@ -92,8 +106,8 @@ export default function ProductForm({
       return;
     }
 
-    if (images.length > 3) {
-      setError("You can upload a maximum of 3 images.");
+    if (existingMedia.length + images.length > 3) {
+      setError("You can have a maximum of 3 images per product.");
       return;
     }
 
@@ -133,37 +147,17 @@ export default function ProductForm({
     }
   }
 
-  function handleImageSelection(event: React.ChangeEvent<HTMLInputElement>) {
-    const selectedFiles = Array.from(event.target.files ?? []);
-    event.target.value = "";
-
-    setImages((currentImages) => {
-      const remainingSlots = Math.max(
-        0,
-        3 - existingMedia.length - currentImages.length,
-      );
-      const filesToAdd = selectedFiles.slice(0, remainingSlots);
-
-      return [...currentImages, ...filesToAdd];
-    });
-  }
-
-  function removeImage(indexToRemove: number) {
-    setImages((currentImages) =>
-      currentImages.filter((_, index) => index !== indexToRemove),
-    );
-  }
-
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-3">
         <div>
-          <label className="block text-sm font-medium text-text">
+          <p className="block text-sm font-medium text-text">
             Product images{" "}
             <span className="text-text-muted">(optional, up to 3)</span>
-          </label>
+          </p>
           <p className="mt-1 text-xs text-text-muted">
-            Add photos from different angles. JPG, PNG or WebP, up to 5 MB each.
+            Add photos from different angles. JPG, PNG or WebP. Large photos are
+            shrunk automatically.
           </p>
         </div>
 
@@ -215,13 +209,16 @@ export default function ProductForm({
           ))}
 
           {existingMedia.length + images.length < 3 && (
-            <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-surface p-2 text-center hover:bg-background">
+            <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-surface p-2 text-center hover:bg-background focus-within:ring-2 focus-within:ring-primary">
               <ImagePlus size={24} className="text-text-muted" />
-              <span className="text-xs font-medium text-text">Add image</span>
+              <span className="text-xs font-medium text-text">
+                {isProcessing ? "Preparing..." : "Add image"}
+              </span>
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
                 multiple
+                disabled={isProcessing}
                 onChange={handleImageSelection}
                 className="sr-only"
               />
@@ -232,6 +229,18 @@ export default function ProductForm({
         <p className="text-xs text-text-muted" aria-live="polite">
           {existingMedia.length + images.length} of 3 images selected
         </p>
+
+        {imageError && (
+          <p role="alert" className="text-sm text-danger">
+            {imageError}
+          </p>
+        )}
+
+        {serverImageErrors.map((message) => (
+          <p key={message} className="mt-1 text-sm text-danger">
+            {message}
+          </p>
+        ))}
       </div>
 
       <div className="space-y-4">
@@ -398,14 +407,16 @@ export default function ProductForm({
 
       <button
         type="submit"
-        disabled={isSubmitting}
+        disabled={isSubmitting || isProcessing}
         className="w-full rounded-input bg-primary px-4 py-3 font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isSubmitting
           ? "Saving product…"
-          : initialProduct
-            ? "Update product"
-            : "Create product"}
+          : isProcessing
+            ? "Preparing images…"
+            : initialProduct
+              ? "Update product"
+              : "Create product"}
       </button>
     </form>
   );

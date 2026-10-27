@@ -4,6 +4,7 @@ import type IUser from "../../../types/user.types";
 
 export type UpdateProfilePayload = Pick<IUser, "first_name" | "last_name"> & {
     phone: string;
+    email: string;
 };
 
 export function useUpdateProfile() {

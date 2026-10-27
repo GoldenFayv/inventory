@@ -64,7 +64,7 @@ export const productService = {
             String(payload.low_stock_threshold),
         );
 
-        payload.images.forEach((image) => {
+        payload.images?.forEach((image) => {
             formData.append("images[]", image);
         });
 

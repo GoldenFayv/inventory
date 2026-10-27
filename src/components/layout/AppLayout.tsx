@@ -2,12 +2,13 @@ import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 
 import { Menu, LogOut, X } from "lucide-react";
 import { useAuth } from "../../app/AuthProvider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { navigation } from "./navigation";
 import Logo from "./LogoMark";
+import EmailVerificationReminder from "../../features/auth/EmailVerificationReminder";
 
 export default function AppLayout() {
-  const { user, logout } = useAuth();
+  const { user, logout, refreshUser } = useAuth();
   const permissions = user?.store_user?.permissions ?? [];
 
   const can = (permission: string) =>
@@ -36,6 +37,22 @@ export default function AppLayout() {
     }
   }
 
+  useEffect(() => {
+    if (!user || user.email_verified) return;
+
+    function handleWindowFocus() {
+      void refreshUser().catch(() => {
+        // Keep the existing user state if refreshing temporarily fails.
+      });
+    }
+
+    window.addEventListener("focus", handleWindowFocus);
+
+    return () => {
+      window.removeEventListener("focus", handleWindowFocus);
+    };
+  }, [user, user?.email_verified, refreshUser]);
+
   return (
     <div className="flex h-dvh overflow-hidden bg-background text-text">
       {/* Desktop sidebar */}
@@ -46,7 +63,7 @@ export default function AppLayout() {
             className="pointer-events-none absolute -left-8 -top-10 h-32 w-32 rounded-full bg-primary/15 blur-2xl"
           />
           <Link to="/" aria-label="TallyHouse home" className="relative block">
-            <Logo tagline="Inventory & Sales"/>
+            <Logo tagline="Inventory & Sales" />
           </Link>
         </div>
 
@@ -151,6 +168,14 @@ export default function AppLayout() {
             <Outlet />
           </div>
         </main>
+
+        {user && !user.email_verified && (
+          <EmailVerificationReminder
+            key={String(user.id)}
+            userId={String(user.id)}
+            email={user.email}
+          />
+        )}
 
         {/* Mobile bottom navigation */}
         <nav

@@ -29,8 +29,14 @@ import {
   SalesReturnDetailsPage,
   SalesReturnsPage,
 } from "../features/sales-returns";
+import EmailVerificationPage from "../features/auth/EmailVerificationPage";
+import NotFoundPage from "../pages/NotFoundPage";
 
 export const router = createBrowserRouter([
+  {
+    path: "*",
+    element: <NotFoundPage />,
+  },
   {
     path: "/login",
     element: <LoginPage />,
@@ -46,6 +52,10 @@ export const router = createBrowserRouter([
   {
     path: "/reset-password",
     element: <ResetPasswordPage />,
+  },
+  {
+    path: "/email/verify",
+    element: <EmailVerificationPage />,
   },
 
   {

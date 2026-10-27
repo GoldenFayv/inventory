@@ -12,7 +12,7 @@ export interface LoginCredentials {
 }
 
 
-export interface RegisterCredentials extends Omit<IUser, 'email_verified' | 'phone_verified'> {
+export interface RegisterCredentials extends Omit<IUser, 'email_verified' | 'phone_verified' | 'id'> {
   password: string;
   password_confirmation: string;
 }

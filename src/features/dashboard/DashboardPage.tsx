@@ -1,5 +1,4 @@
 import { useState, type ComponentProps, type ReactNode } from "react";
-import { RefreshCw } from "lucide-react";
 
 import QuickActions from "./components/QuickActions";
 import LowStockList from "./components/LowStockList";
@@ -13,6 +12,9 @@ import DashboardCards from "./components/Cards";
 import { HasPermission } from "../../components/layout/HasPermission";
 import { PermissionEnum } from "../../utils/permissions";
 import SectionError from "./components/SectionError";
+import { useIsFetching, useQueryClient } from "@tanstack/react-query";
+import RefreshButton from "../../components/ui/RefreshButton";
+import type { DashboardResponse } from "./dashboard.types";
 
 type DateMode = "today" | "single" | "range";
 
@@ -143,6 +145,8 @@ function OutstandingCreditSection({
 }
 
 export default function DashboardPage() {
+  const queryClient = useQueryClient();
+  const isRefreshing = useIsFetching() > 0;
   const [from, setFrom] = useState(getLocalDate);
   const [to, setTo] = useState("");
 
@@ -199,7 +203,8 @@ export default function DashboardPage() {
   /** Sections that need the summary request: loading, error or content. */
   function withSummary(
     title: string,
-    render: (summary: NonNullable<typeof summary>) => ReactNode,
+    // Replace 'DashboardSummary' with your actual interface/type name
+    render: (summary: NonNullable<DashboardResponse["summary"]>) => ReactNode,
   ) {
     if (summary) return render(summary);
     if (summaryQuery.isPending) return <SectionSkeleton />;
@@ -227,19 +232,11 @@ export default function DashboardPage() {
             Here's how your shop is doing {periodLabel}.
           </p>
         </div>
-
-        <button
-          type="button"
-          aria-label="Refresh shop summary"
-          onClick={() => void summaryQuery.refetch()}
-          disabled={summaryQuery.isFetching}
-          className="flex size-11 shrink-0 items-center justify-center rounded-input border border-border bg-surface text-text-muted hover:bg-background disabled:opacity-50"
-        >
-          <RefreshCw
-            size={19}
-            className={summaryQuery.isFetching ? "animate-spin" : ""}
-          />
-        </button>
+        <RefreshButton
+          onRefresh={() => queryClient.refetchQueries({ type: "active" })}
+          isRefreshing={isRefreshing}
+          loadingLabel="Refreshing..."
+        />
       </header>
 
       <section

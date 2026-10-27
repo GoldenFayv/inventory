@@ -5,7 +5,7 @@ interface AddItemsFormProps {
   products: IProduct[];
   isLoading: boolean;
   isPending: boolean;
-  onSubmit: (items: { product_id: string; quantity: number }[]) => void;
+  onSubmit: (items: { product_id: Id; quantity: number }[]) => void;
   search: string;
   onSearchChange: (value: string) => void;
 }

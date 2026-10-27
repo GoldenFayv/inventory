@@ -3,7 +3,8 @@ import { useUpdateProfile } from "../hooks/useProfile";
 import type IUser from "../../../types/user.types";
 import { getValidationErrors } from "../../../lib/error";
 import Field from "../../../components/ui/Field";
-import { User } from "lucide-react";
+import { LoaderCircle, MailCheck, User } from "lucide-react";
+import { emailVerificationService } from "../../auth/services/emailVerificationService";
 
 type ProfileValues = {
   first_name: string;
@@ -26,6 +27,33 @@ export default function ProfileForm({ user }: { user: IUser }) {
   const [values, setValues] = useState<ProfileValues>(() =>
     toProfileValues(user),
   );
+
+  const [isSendingVerification, setIsSendingVerification] = useState(false);
+  const [verificationMessage, setVerificationMessage] = useState<string | null>(
+    null,
+  );
+  const [verificationError, setVerificationError] = useState<string | null>(
+    null,
+  );
+
+  async function sendVerificationEmail() {
+    setIsSendingVerification(true);
+    setVerificationMessage(null);
+    setVerificationError(null);
+
+    try {
+      await emailVerificationService.sendVerificationLink();
+      setVerificationMessage(
+        "Verification link sent. Check your inbox and spam folder.",
+      );
+    } catch {
+      setVerificationError(
+        "Couldn't send the verification email. Please try again.",
+      );
+    } finally {
+      setIsSendingVerification(false);
+    }
+  }
 
   const saved = toProfileValues(user);
   const isDirty = (Object.keys(values) as (keyof ProfileValues)[]).some(
@@ -53,6 +81,7 @@ export default function ProfileForm({ user }: { user: IUser }) {
       first_name: values.first_name.trim(),
       last_name: values.last_name.trim(),
       phone: values.phone.trim(),
+      email: values.email.trim(),
     });
   }
 
@@ -96,14 +125,45 @@ export default function ProfileForm({ user }: { user: IUser }) {
           errors={fields.phone}
           autoComplete="tel"
         />
-        <Field
-          label="Email"
-          onChange={(v) => setField("email", v)}
-          type="email"
-          readOnly
-          value={user.email}
-          hint={user.email_verified ? "Verified" : "Not verified"}
-        />
+        <div className="space-y-2">
+          <Field
+            label="Email"
+            type="email"
+            readOnly={user.email_verified}
+            value={values.email}
+            onChange={(value) => setField("email", value)}
+            hint={user.email_verified ? "Verified" : "Not verified"}
+          />
+
+          {!user.email_verified && (
+            <button
+              type="button"
+              onClick={() => void sendVerificationEmail()}
+              disabled={isSendingVerification}
+              className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isSendingVerification ? (
+                <LoaderCircle size={16} className="animate-spin" />
+              ) : (
+                <MailCheck size={16} />
+              )}
+
+              {isSendingVerification ? "Sending link..." : "Verify email"}
+            </button>
+          )}
+
+          {verificationMessage && (
+            <p role="status" className="text-sm text-success">
+              {verificationMessage}
+            </p>
+          )}
+
+          {verificationError && (
+            <p role="alert" className="text-sm text-danger">
+              {verificationError}
+            </p>
+          )}
+        </div>
       </div>
 
       {updateProfile.isError && !hasFieldErrors && (
