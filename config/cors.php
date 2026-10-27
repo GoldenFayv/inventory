@@ -6,7 +6,7 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        app()->isLocal() ? 'http://localhost:5173' : 'https://app.usetallyhouse.com',
+        env('APP_ENV') !== 'production' ? 'http://localhost:5173' : 'https://app.usetallyhouse.com',
     ],
 
     'allowed_origins_patterns' => [],
