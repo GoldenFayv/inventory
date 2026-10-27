@@ -1,0 +1,37 @@
+
+:root {
+  /* Brand colors — shared with the TallyHouse app */
+  --th-primary: #49B99F;
+  --th-primary-hover: #A0BEA4;
+  --th-primary-light: #E5F5F0;
+  --th-secondary: #3A89C3;
+
+  /* Surfaces */
+  --th-background: #F4F7F8;
+  --th-surface: #FFFFFF;
+  --th-border: #DCE5E8;
+
+  /* Typography */
+  --th-text: #1A2B3C;
+  --th-text-muted: #64748B;
+  --th-text-inverse: #FFFFFF;
+  --th-font-sans: Arial, Helvetica, sans-serif;
+
+  /* Semantic colors */
+  --th-success: #8DBB96;
+  --th-warning: #D6B779;
+  --th-danger: #E19A95;
+
+  /* Shape */
+  --th-radius-card: 12px;
+  --th-radius-input: 8px;
+  --th-radius-pill: 9999px;
+
+  /* Effects */
+  --th-shadow-card: 0 2px 12px rgb(26 43 60 / 5%);
+  --th-shadow-card-hover: 0 6px 20px rgb(26 43 60 / 9%);
+
+  /* Layout */
+  --th-container-width: 72rem;
+  --th-section-spacing: 5rem;
+}

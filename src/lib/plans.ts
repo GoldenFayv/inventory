@@ -10,7 +10,7 @@ export async function getPlans(): Promise<SubscriptionPlan[]> {
     }
 
     const response = await fetch(
-        `${apiUrl.replace(/\/$/, "")}/api/v1/plans`,
+        `${apiUrl.replace(/\/$/, "")}/plans`,
         {
             next: {
                 revalidate: 3600,
@@ -19,9 +19,7 @@ export async function getPlans(): Promise<SubscriptionPlan[]> {
     );
 
     if (!response.ok) {
-        throw new Error(
-            `Failed to fetch subscription plans: ${response.status}`,
-        );
+        throw new Error(`Failed to fetch subscription plans: ${response.status}`);
     }
 
     const result: ApiResponse<SubscriptionPlan[]> = await response.json();
