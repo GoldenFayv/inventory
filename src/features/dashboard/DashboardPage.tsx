@@ -251,9 +251,11 @@ export default function DashboardPage() {
         </div>
 
         <div
-          className={`grid grid-cols-1 gap-3 ${showTo ? "sm:grid-cols-2" : ""}`}
+          className={`grid w-full min-w-0 grid-cols-1 gap-3 ${
+            showTo ? "sm:grid-cols-2" : ""
+          }`}
         >
-          <div className="space-y-2">
+          <div className="min-w-0 space-y-2">
             <label
               htmlFor="dashboard-from"
               className="block text-sm font-medium"
@@ -268,12 +270,12 @@ export default function DashboardPage() {
               min={MIN_DATE}
               max={today}
               onChange={(event) => handleFromChange(event.target.value)}
-              className="min-h-12 w-full rounded-input border border-border bg-background px-3 text-text focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="box-border block min-h-12 w-full min-w-0 max-w-full rounded-input border border-border bg-background px-3 text-text focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
           {showTo && (
-            <div className="space-y-2">
+            <div className="min-w-0 space-y-2">
               <label
                 htmlFor="dashboard-to"
                 className="block text-sm font-medium"
@@ -289,7 +291,7 @@ export default function DashboardPage() {
                 max={today}
                 aria-describedby="dashboard-to-hint"
                 onChange={(event) => setTo(event.target.value)}
-                className="min-h-12 w-full rounded-input border border-border bg-background px-3 text-text focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="box-border block min-h-12 w-full min-w-0 max-w-full rounded-input border border-border bg-background px-3 text-text focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
 
               <p id="dashboard-to-hint" className="text-xs text-text-muted">

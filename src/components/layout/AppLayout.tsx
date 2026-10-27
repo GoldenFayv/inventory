@@ -180,7 +180,10 @@ export default function AppLayout() {
         {/* Mobile bottom navigation */}
         <nav
           aria-label="Main navigation"
-          className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] md:hidden"
+          className="fixed inset-x-0 bottom-0 z-50 grid border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] md:hidden"
+          style={{
+            gridTemplateColumns: `repeat(${visibleNavigation.length}, minmax(0, 1fr))`,
+          }}
         >
           {visibleNavigation.map(({ label, to, icon: Icon }) => (
             <NavLink
