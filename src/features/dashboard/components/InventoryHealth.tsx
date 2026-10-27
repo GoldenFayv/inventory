@@ -22,7 +22,7 @@ const metrics = [
     description: "Products to restock soon",
     icon: PackageSearch,
     color: "text-warning",
-    bg: "bg-amber-50",
+    bg: "bg-warning/10",
   },
   {
     key: "outOfStockCount",
@@ -30,7 +30,7 @@ const metrics = [
     description: "Products with no stock",
     icon: CircleAlert,
     color: "text-danger",
-    bg: "bg-red-50",
+    bg: "bg-danger/10",
   },
 ] as const;
 
@@ -59,33 +59,35 @@ export default function InventoryHealth({
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 min-[380px]:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {metrics.map((metric) => {
           const Icon = metric.icon;
+          const value = values[metric.key].toLocaleString("en-NG");
 
           return (
-            <article
+            <Link
               key={metric.key}
-              className="flex min-w-0 items-start gap-3 rounded-card border border-border bg-surface p-4"
+              to="/products"
+              aria-label={`${metric.label}: ${value}. View products`}
+              className="flex min-w-0 items-center gap-3 rounded-card border border-border bg-surface p-4 transition hover:bg-background sm:flex-col sm:items-start sm:gap-4"
             >
-                <span
-                  className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${metric.bg} ${metric.color}`}
-                >
-                  <Icon size={20} aria-hidden="true" />
-                </span>
+              <span
+                className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${metric.bg} ${metric.color}`}
+              >
+                <Icon size={20} aria-hidden="true" />
+              </span>
 
-                  <Link to={"/products"}>
-                <div className="min-w-0">
-                  <p className="text-sm text-text-muted">{metric.label}</p>
-                  <p className="mt-1 text-2xl font-bold text-text">
-                    {values[metric.key].toLocaleString("en-NG")}
-                  </p>
-                  <p className="mt-1 text-xs leading-5 text-text-muted">
-                    {metric.description}
-                  </p>
-                </div>
-              </Link>
-            </article>
+              <div className="min-w-0 flex-1 sm:order-2 sm:flex-none">
+                <p className="text-sm font-medium text-text">{metric.label}</p>
+                <p className="mt-0.5 text-xs leading-5 text-text-muted">
+                  {metric.description}
+                </p>
+              </div>
+
+              <p className="text-2xl font-bold tabular-nums text-text sm:order-1">
+                {value}
+              </p>
+            </Link>
           );
         })}
       </div>

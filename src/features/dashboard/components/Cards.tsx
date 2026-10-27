@@ -33,7 +33,7 @@ export default function DashboardCards({
   dateMode,
   periodLabel,
 }: CardsProps) {
-  const x: SummaryCardProps[] = [
+  const something: SummaryCardProps[] = [
     {
       label: dateMode === "today" ? "Sales today" : "Sales",
       amount: data.summary.sales,
@@ -81,7 +81,7 @@ export default function DashboardCards({
     },
   ] as const;
 
-  const [cards] = useState<SummaryCardProps[]>(x);
+  const [cards] = useState<SummaryCardProps[]>(something);
 
   return (
     <div className="grid grid-cols-1 gap-3 min-[380px]:grid-cols-2 sm:gap-4 xl:grid-cols-3">
