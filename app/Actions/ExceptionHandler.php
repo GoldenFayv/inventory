@@ -23,18 +23,7 @@ class ExceptionHandler
 
         // $exceptions->render(fn(ModelNotFoundException|NotFoundHttpException $e, Request $request): JsonResponse|null => self::json($request, 'Resource not found', 404));
 
-        // $exceptions->render(function (ValidationException $e, Request $request) {
-        //     foreach ($request->file('images', []) as $i => $file) {
-        //         logger()->debug('upload check', [
-        //             'index'   => $i,
-        //             'valid'   => $file->isValid(),
-        //             'error'   => $file->getError(),
-        //             'message' => $file->getErrorMessage(),
-        //             'size'    => $file->getSize(),
-        //         ]);
-        //     }
-        //     return self::json($request, 'Validation failed', 422, ['errors' => $e->errors()]);
-        // });
+        $exceptions->render(fn(ValidationException $e, Request $request) => self::json($request, $e->getMessage(), 422, ['errors' => $e->errors()]));
 
         $exceptions->render(fn(PermissionDoesNotExist $e, Request $request): JsonResponse|null => self::json($request, 'Permission does not exist!', 422));
 

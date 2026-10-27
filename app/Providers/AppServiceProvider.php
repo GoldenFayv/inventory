@@ -42,7 +42,7 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         Passport::enablePasswordGrant();
-        // Passport::loadKeysFrom(storage_path('oauth'));
+        env('APP_ENV') === "production" ? null: Passport::loadKeysFrom(storage_path('oauth'));
         Passport::tokensExpireIn(CarbonInterval::minutes(app()->isProduction() ? 20 : 60));
         Passport::refreshTokensExpireIn(CarbonInterval::days(30));
         // Passport::personalAccessTokensExpireIn(CarbonInterval::months(6));
