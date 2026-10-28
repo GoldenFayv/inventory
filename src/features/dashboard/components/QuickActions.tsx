@@ -1,6 +1,6 @@
 
 import { Link } from 'react-router-dom';
-import { Plus, PackagePlus, Users } from 'lucide-react';
+import { Plus, PackagePlus } from 'lucide-react';
 
 export default function QuickActions() {
   return (
