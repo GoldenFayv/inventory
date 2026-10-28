@@ -109,7 +109,7 @@ export default function AppLayout() {
 
       <div className="flex h-dvh min-h-0 min-w-0 flex-1 flex-col overflow-hidden pt-5">
         {/* Header */}
-        <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border bg-surface px-4 md:px-8">
+        <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border  px-4 md:px-8">
           <div className="flex items-center gap-3">
             <Link
               to="/"
