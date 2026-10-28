@@ -4,6 +4,7 @@ import axios from "axios";
 
 import { useAuth } from "../../app/AuthProvider";
 import type { RegisterCredentials } from "../../types/auth.types";
+import Logo from "../../components/layout/LogoMark";
 
 type RegistrationField =
   | "first_name"
@@ -103,7 +104,8 @@ export default function RegisterPage() {
     }
   }
 
-  const inputClass = "w-full rounded-input border border-border bg-surface px-3 py-3 text-base text-text outline-none focus-visible:ring-2 focus-visible:ring-primary";
+  const inputClass =
+    "w-full rounded-input border border-border bg-surface px-3 py-3 text-base text-text outline-none focus-visible:ring-2 focus-visible:ring-primary";
 
   function fieldError(field: RegistrationField) {
     return errors[field] ? (
@@ -117,9 +119,7 @@ export default function RegisterPage() {
     <main className="flex min-h-screen items-center justify-center bg-background px-4 py-8">
       <section className="w-full max-w-lg rounded-card border border-border bg-surface p-6 shadow-sm sm:p-8">
         <div className="mb-7">
-          <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-primary text-xl font-bold text-white">
-            I
-          </div>
+          <Logo tagline="Retail Management Suite" className="mb-6" />
 
           <h1 className="text-2xl font-bold tracking-tight text-text">
             Create your account

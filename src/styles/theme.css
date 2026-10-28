@@ -2,23 +2,25 @@
 
 @theme {
   /* Primary accent: muted sage green */
-  --color-primary: #8BAE91;
+  --color-primary: #49B99F;
   --color-primary-hover: #A0BEA4;
-  --color-primary-light: #29382D;
+  --color-primary-light: #E5F5F0;
 
   /* Dark, low-glare surfaces */
-  --color-background: #171A18;
-  --color-surface: #202421;
-  --color-border: #353C36;
+  --color-background: #F4F7F8;
+  --color-surface: #FFFFFF;
+  --color-border: #DCE5E8;
 
   /* Readable, softened typography */
-  --color-text: #E0E5DF;
-  --color-text-muted: #A0AAA1;
+  --color-text: #1A2B3C;
+  --color-text-muted: #64748B;
 
   /* Muted semantic colors */
   --color-success: #8DBB96;
   --color-warning: #D6B779;
   --color-danger: #E19A95;
+  --color-secondary: #3A89C3;
+
 
   --radius-card: 12px;
   --radius-input: 8px;
