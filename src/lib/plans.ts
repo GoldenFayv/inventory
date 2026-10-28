@@ -10,7 +10,7 @@ export async function getPlans(): Promise<SubscriptionPlan[]> {
     }
 
     const response = await fetch(
-        `${apiUrl.replace(/\/$/, "")}/plans`,
+        `${apiUrl.replace(/\/$/, "")}/api/v1/plans`,
         {
             next: {
                 revalidate: 3600,
