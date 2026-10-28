@@ -29,13 +29,13 @@ export default function QuickActions() {
           Add Product
         </Link>
 
-        <Link
+        {/* <Link
           to="/debts"
           className="flex min-h-14 items-center justify-center gap-2 rounded-input border border-border bg-surface px-5 py-4 font-semibold text-text transition-colors hover:bg-background sm:col-span-2"
         >
           <Users size={21} aria-hidden="true" />
           View Customer Debts
-        </Link>
+        </Link> */}
       </div>
     </section>
   );
