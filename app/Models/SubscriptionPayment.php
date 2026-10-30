@@ -42,6 +42,6 @@ class SubscriptionPayment extends MyBaseModel
 
     public function isSuccessful(): bool
     {
-        return $this->status === SubscriptionPaymentStatus::SUCCESSFUL;
+        return $this->status === SubscriptionPaymentStatus::SUCCESSFUL && $this->paid_at !== null;
     }
 }

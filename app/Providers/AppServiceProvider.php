@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Enum\MorphMapEnum;
+use App\Models\Invoice;
 use App\Models\Product;
 use App\Models\SalesReturn;
+use App\Models\StockMovement;
 use App\Models\Store;
 use App\Models\User;
 use App\Models\UserStore;
@@ -39,17 +41,19 @@ class AppServiceProvider extends ServiceProvider
             MorphMapEnum::PRODUCT->value => Product::class,
             MorphMapEnum::STORE->value => Store::class,
             MorphMapEnum::SALERETURN->value => SalesReturn::class,
+            MorphMapEnum::STOCK_MOVEMENT->value => StockMovement::class,
+            MorphMapEnum::INVOICE->value => Invoice::class,
         ]);
 
         Passport::enablePasswordGrant();
-        env('APP_ENV') === "production" ? null: Passport::loadKeysFrom(storage_path('oauth'));
+        env('APP_ENV') === "production" ? null : Passport::loadKeysFrom(storage_path('oauth'));
         Passport::tokensExpireIn(CarbonInterval::minutes(app()->isProduction() ? 20 : 60));
         Passport::refreshTokensExpireIn(CarbonInterval::days(30));
         // Passport::personalAccessTokensExpireIn(CarbonInterval::months(6));
 
         Http::macro(
             'paystack',
-           fn()=> Http::withToken(config('services.paystack.secret_key'))->acceptJson()
+            fn() => Http::withToken(config('services.paystack.secret_key'))->acceptJson()
                 ->asJson()
                 ->connectTimeout(5)
                 ->timeout(20)

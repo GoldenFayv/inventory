@@ -23,7 +23,7 @@ final readonly class StockMovementItem
 
     /**
      * @param  array<int, array>  $items
-     * @return Collection<int, self>
+     * @return Collection<string, self>
      */
     public static function collect(array $items): Collection
     {

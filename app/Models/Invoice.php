@@ -89,6 +89,6 @@ class Invoice extends Model
 
         $this->save();
 
-        return $this;
+        return $this->refresh();
     }
 }

@@ -33,7 +33,7 @@ class EmailVerificationController extends Controller
     public function verify(Request $request, string $id, string $hash): RedirectResponse
     {
         $frontendUrl = rtrim(
-            (string) config('app.frontend_url', env('FRONTEND_URL', 'http://localhost:5173')),
+            (string) config('app.frontend_url'),
             '/',
         );
 

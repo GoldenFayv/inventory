@@ -36,7 +36,7 @@ class CreateProduct
             "selling_price.numeric" => "Selling price must be a number.",
             "cost_price.required" => "Enter a cost price.",
             "cost_price.numeric" => "Cost price must be a number.",
-            "opening_quantity.integer" => "Opening quantity must be a whole number.",
+            "opening_quantity.integer" => "Opening quantity must be a whole number.", /*The increment is triggered by stock movement' boot handle*/
             "images.array" => "Images must be sent as a list of files.",
             "images.max" => "You can upload at most :max images.",
             "images.*.file" => "Each image must be a valid file.",
@@ -50,11 +50,10 @@ class CreateProduct
             'images.*.uploaded' => 'Each image must be smaller than 2048KB.',
             'images.*.max'      => 'Each image must be 2048KB or less.',
         ]);
-        logger("Data", $data);
+
         $validated = $validator->validate();
-        $validated['opening_quantity'] = 0;
         $validated['sku'] ??= generateSku();
 
-        return $user->active_store->products()->create(['quantity' => $validated['opening_quantity'], ...$validated])->load("media");
+        return $user->active_store->products()->create($validated)->load("media");
     }
 }

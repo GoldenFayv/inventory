@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use App\DataTransferObjects\StockMovementItem;
 use App\Enum\StockMovementType;
+use App\Events\StockMovementRecorded;
 use App\Models\Product;
 use App\Models\StockMovement;
 use App\Models\User;
@@ -52,7 +53,11 @@ class RecordStockMovement
                 'reference_id' => $reference?->getKey(),
             ]);
 
-            return $user->stock_movements()->createMany($rows);
+            $movements = $user->stock_movements()->createMany($rows);
+
+            StockMovementRecorded::dispatch($user, $movements);
+
+            return $movements;
         });
     }
 }

@@ -13,6 +13,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",
         "resend/resend-laravel": "*",
+        "spatie/laravel-activitylog": "*",
         "spatie/laravel-medialibrary": "*",
         "spatie/laravel-permission": "*"
     },

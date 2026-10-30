@@ -9,4 +9,6 @@ enum MorphMapEnum: string
     case PRODUCT = "product";
     case STORE = "store";
     case SALERETURN = "sale_return";
+    case STOCK_MOVEMENT = "stock_movement";
+    case INVOICE = "invoice";
 }

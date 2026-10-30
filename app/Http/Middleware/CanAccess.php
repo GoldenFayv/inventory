@@ -13,7 +13,6 @@ class CanAccess
 {
     public function handle(Request $request, Closure $next, string $permission): Response
     {
-        return $next($request);
         $user = $request->user();
 
         abort_if(! $user, 401, 'Unauthenticated');
@@ -44,7 +43,7 @@ class CanAccess
             abort(402, 'Your current plan does not include this feature.');
         }
 
-        abort_unless($userStore->hasPermissionTo($permission), 403, 'Access denied');
+        abort_unless($userStore->hasPermissionTo($permission) || $userStore->isOwner(), 403, 'Access denied');
 
         return $next($request);
     }

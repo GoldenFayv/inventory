@@ -33,7 +33,7 @@ class SalesService
             $products = Product::query()->where('store_id', $store->id)->whereIn('id', $productIds)->orderBy('id')->lockForUpdate()->get()->keyBy('id');
 
             $validated = $this->salesService->validateSales($products, $itemsByProductId, (array) $data);
-            
+
             $invoice = $this->getInvoice->handle($user, $validated);
 
             $items = $this->attachItemsToInvoice->handle($invoice, $validated['prepared_items']);
@@ -43,8 +43,8 @@ class SalesService
             if ($validated['amount'] > 0) {
                 $this->createPayment->handle($invoice, $validated['amount'], $validated['payment_method']);
             }
-            
-            return $invoice->calculateTotals()->load('items.product', 'payments');
+
+            return $invoice->calculateTotals()->load(['items.product', 'payments']);
         });
     }
 

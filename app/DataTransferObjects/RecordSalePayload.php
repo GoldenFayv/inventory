@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 final readonly class RecordSalePayload
 {
     /**
-     * @param  Collection<int, StockMovementItem>|null  $items
+     * @param  Collection<string, StockMovementItem>|null  $items
      */
     public function __construct(
         public string $customer_name,

@@ -37,7 +37,7 @@ class ProductService
 
             $this->recordStockMovement->handle($user, StockMovementItem::collect($items),  StockMovementType::OpeningStock);
 
-            return $product;
+            return $product->refresh();
         });
     }
 
@@ -45,7 +45,7 @@ class ProductService
     {
         $this->updateProduct->handle($user, $product, $data);
 
-        return $product;
+        return $product->refresh();
     }
 
     /**

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Products;
 
 use App\Actions\UpdateProduct;
+use App\Events\ProductCreated;
+use App\Events\ProductUpdated;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
@@ -25,13 +27,6 @@ class ProductController extends Controller
 
     public function store(Request $request): ProductResource
     {
-        logger()->debug('limits', [
-            'sapi'   => php_sapi_name(),
-            'ini'    => php_ini_loaded_file(),
-            'upload' => ini_get('upload_max_filesize'),
-            'post'   => ini_get('post_max_size'),
-            'php'    => PHP_VERSION,
-        ]);
         $user = $request->user();
 
         $product = $this->productService->create($user, $request->all());
@@ -39,6 +34,8 @@ class ProductController extends Controller
         if ($request->hasFile("images") && $product) {
             $product->uploadFiles($request->file("images"), "image");
         }
+
+        ProductCreated::dispatch($user, $product);
 
         return new ProductResource($product);
     }
@@ -63,6 +60,8 @@ class ProductController extends Controller
         if ($request->hasFile("images") && $product) {
             $product->uploadFiles($request->file("images"), "image");
         }
+
+        ProductUpdated::dispatch($user, $product);
 
         return new ProductResource($product);
     }

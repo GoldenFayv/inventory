@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Webhooks;
 
+use App\Http\Controllers\Controller;
 use App\Models\SubscriptionPayment;
 use App\Services\PaystackService;
 use App\Services\SubscriptionPaymentService;
@@ -40,7 +41,9 @@ class PaystackWebhookController extends Controller
             return response()->json(['received' => true]);
         }
 
-        $paymentService->verify($payment, $request->user(), $reference);
+        if (!$payment->isSuccessful()) {
+            $paymentService->verify($payment, $request->user(), $reference);
+        }
 
         return response()->json(['received' => true]);
     }

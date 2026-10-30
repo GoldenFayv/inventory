@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DataTransferObjects\RecordSalePayload;
 use App\DataTransferObjects\UpdateSalePayload;
 use App\Events\SaleRecorded;
+use App\Events\SaleUpdated;
 use App\Http\Requests\StoreSaleRequest;
 use App\Http\Requests\UpdateSaleRequest;
 use App\Http\Resources\InvoiceResource;
@@ -48,6 +49,8 @@ class SalesController extends Controller
         $user = $request->user();
 
         $invoice = $this->salesService->updateSales($invoiceId, $user,  UpdateSalePayload::fromArray($request->validated()));
+
+        SaleUpdated::dispatch($invoice);
 
         return new InvoiceResource($invoice);
     }
