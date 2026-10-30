@@ -23,7 +23,7 @@ class ActivityLogger
 
     public function log(ActivityLoggerEvent $event, Model $causer, Store $store, ?Model $subject = null, array $properties = [], ?array $attributeChanges = null): Activity
     {
-        $attributeChanges = $subject && in_array($event, [ActivityLoggerEvent::PRODUCT_UPDATED, ActivityLoggerEvent::SALE_UPDATED], true) ? $this->extractChanges($subject) : [];
+        $attributeChanges ??= $subject && in_array($event, [ActivityLoggerEvent::PRODUCT_UPDATED, ActivityLoggerEvent::SALE_UPDATED], true) ? $this->extractChanges($subject) : [];
         /**
          * @var Activity $activity
          */

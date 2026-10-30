@@ -50,21 +50,24 @@ class SalesService
 
     /**
      * Summary of updateSales
-     * @param string $invoiceId
+     * @param Invoice $invoice
      * @param User $user
      *  @param  UpdateSalePayload  $data
      * @return Invoice
      */
-    public function updateSales(string $invoiceId, User $user, UpdateSalePayload $data): Invoice
+    public function updateSales(Invoice $invoice, User $user, UpdateSalePayload $data): Invoice
     {
-        return DB::transaction(function () use ($user, $invoiceId, $data): Invoice {
-            $invoice = Invoice::where('store_id', $user->active_store_id)->lockForUpdate()->findOrFail($invoiceId);
+        $before = [];
+        $invoice = DB::transaction(function () use ($user, $invoice, $data, &$before): Invoice {
+            $invoice = Invoice::where('store_id', $user->active_store_id)->lockForUpdate()->findOrFail($invoice->getKey());
 
             if (! empty($data->items) && SalesReturn::query()->where('invoice_id', $invoice->id)->exists()) {
                 throw ValidationException::withMessages([
                     'items' => ['Invoice items cannot be changed after a sales return has been requested.'],
                 ]);
             }
+
+            $before = $this->getSaleSnapshot($invoice);
 
             $store = $user->active_store;
 
@@ -82,12 +85,35 @@ class SalesService
                 $this->recordStockMovement->handle($user, StockMovementItem::collect($items->toArray()), StockMovementType::Sale);
             }
 
-
             if ($validated['amount'] > 0) {
                 $this->createPayment->handle($invoice, $validated['amount'], $validated['payment_method']);
             }
 
             return $invoice->calculateTotals()->load('items.product', 'payments');
         });
+
+        return $invoice;
+    }
+
+    public function getSaleSnapshot(Invoice $invoice): array
+    {
+        $invoice->loadMissing(['items', 'payments']);
+
+        return [
+            'total_amount' => $invoice->total_amount,
+            'total_amount_paid' => $invoice->total_amount_paid,
+            'items' => $invoice->items->map(fn($item) => [
+                'id' => $item->id,
+                'product_id' => $item->product_id,
+                'quantity' => $item->quantity,
+                'unit_price' => $item->unit_price,
+                'subtotal' => $item->subtotal,
+            ])->values()->all(),
+            'payments' => $invoice->payments->map(fn($payment) => [
+                'id' => $payment->id,
+                'amount' => $payment->amount,
+                'payment_method' => $payment->payment_method,
+            ])->values()->all(),
+        ];
     }
 }

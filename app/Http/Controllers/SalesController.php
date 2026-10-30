@@ -48,9 +48,15 @@ class SalesController extends Controller
     {
         $user = $request->user();
 
-        $invoice = $this->salesService->updateSales($invoiceId, $user,  UpdateSalePayload::fromArray($request->validated()));
+        $invoice = Invoice::findOrFail($invoiceId);
 
-        SaleUpdated::dispatch($invoice);
+        $before = $this->salesService->getSaleSnapshot($invoice);
+
+        $invoice = $this->salesService->updateSales($invoice, $user,  UpdateSalePayload::fromArray($request->validated()));
+
+        $after = $this->salesService->getSaleSnapshot($invoice);
+
+        SaleUpdated::dispatch($user, $invoice, $before, $after);
 
         return new InvoiceResource($invoice);
     }

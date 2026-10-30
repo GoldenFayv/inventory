@@ -15,5 +15,5 @@ class SaleUpdated
     /**
      * Create a new event instance.
      */
-    public function __construct(public User $user, public Invoice $invoice) {}
+    public function __construct(public User $user, public Invoice $invoice, public array $before, public array $after) {}
 }
